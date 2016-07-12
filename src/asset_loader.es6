@@ -24,26 +24,7 @@ export class AssetLoader {
   }
 
   loadingComplete(callback, loader, resources) {
-    console.log('All assets loaded.')
+    console.log('Loading: ' + loader.progress + '%')
     callback(loader, resources)
   }
 }
-
-// assetsLoaded(loader, resources) {
-//   var frames = []
-//
-//   for (var i = 1; i <= 4; i++) {
-//       frames.push(PIXI.Texture.fromFrame('detective_walk' + i + '.png'))
-//   }
-//
-//   let movie = new PIXI.extras.MovieClip(frames);
-//
-//   movie.anchor.set(0.5)
-//   movie.position.set(160, 120)
-//   movie.animationSpeed = 0.1
-//
-//   movie.play()
-//   this.stage.addChild(movie)
-//
-//   this.animate()
-// }

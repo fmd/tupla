@@ -16,6 +16,7 @@ export class Game {
   initializeRenderer(opts) {
     PIXI.SCALE_MODES.DEFAULT = opts.scaleMode
     this.renderer = new PIXI.WebGLRenderer(opts.resolution.width, opts.resolution.height)
+    this.renderer.backgroundColor = opts.backgroundColor
   }
 
   initializeWindow(opts) {
@@ -29,7 +30,8 @@ export class Game {
   }
 
   static get defaultOpts() {
-    return { resolution: { width: 160, height: 120 },
-             scaleMode: PIXI.SCALE_MODES.NEAREST }
+    return { resolution: { width: 240, height: 120 },
+             scaleMode: PIXI.SCALE_MODES.NEAREST,
+             backgroundColor: 0x232323 }
   }
 }

@@ -8,7 +8,7 @@ export class SceneManager {
     this.scenes = { menu: new MenuScene(window),
                     game: new GameScene(window) }
 
-    this.scene = this.scenes['menu']
+    this.scene = this.scenes['game']
   }
 
   loop() {
@@ -19,13 +19,6 @@ export class SceneManager {
     }
 
     this.scene.update()
-
-    //if (!this.scene.loaded) {
-    this.window.scene = this.scene.loadingMessage
-    this.renderer.render(this.scene.loadingMessage)
-    return
-    //}
-
     this.renderer.render(this.scene)
   }
 

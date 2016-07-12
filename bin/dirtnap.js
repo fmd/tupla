@@ -52442,32 +52442,13 @@ var AssetLoader = exports.AssetLoader = function () {
   }, {
     key: 'loadingComplete',
     value: function loadingComplete(callback, loader, resources) {
-      console.log('All assets loaded.');
+      console.log('Loading: ' + loader.progress + '%');
       callback(loader, resources);
     }
   }]);
 
   return AssetLoader;
 }();
-
-// assetsLoaded(loader, resources) {
-//   var frames = []
-//
-//   for (var i = 1; i <= 4; i++) {
-//       frames.push(PIXI.Texture.fromFrame('detective_walk' + i + '.png'))
-//   }
-//
-//   let movie = new PIXI.extras.MovieClip(frames);
-//
-//   movie.anchor.set(0.5)
-//   movie.position.set(160, 120)
-//   movie.animationSpeed = 0.1
-//
-//   movie.play()
-//   this.stage.addChild(movie)
-//
-//   this.animate()
-// }
 
 },{"lodash":300,"pixi.js":399}],435:[function(require,module,exports){
 'use strict';
@@ -52512,6 +52493,7 @@ var Game = exports.Game = function () {
     value: function initializeRenderer(opts) {
       _pixi2.default.SCALE_MODES.DEFAULT = opts.scaleMode;
       this.renderer = new _pixi2.default.WebGLRenderer(opts.resolution.width, opts.resolution.height);
+      this.renderer.backgroundColor = opts.backgroundColor;
     }
   }, {
     key: 'initializeWindow',
@@ -52526,15 +52508,16 @@ var Game = exports.Game = function () {
   }], [{
     key: 'defaultOpts',
     get: function get() {
-      return { resolution: { width: 160, height: 120 },
-        scaleMode: _pixi2.default.SCALE_MODES.NEAREST };
+      return { resolution: { width: 240, height: 120 },
+        scaleMode: _pixi2.default.SCALE_MODES.NEAREST,
+        backgroundColor: 0x232323 };
     }
   }]);
 
   return Game;
 }();
 
-},{"./scene_manager":438,"./window":441,"pixi.js":399}],436:[function(require,module,exports){
+},{"./scene_manager":439,"./window":442,"pixi.js":399}],436:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -52545,6 +52528,123 @@ var game = new _game.Game();
 game.play();
 
 },{"./game":435,"babel-polyfill":2}],437:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Player = exports.Player = function (_PIXI$Container) {
+  _inherits(Player, _PIXI$Container);
+
+  function Player() {
+    _classCallCheck(this, Player);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Player).call(this));
+
+    _this.position = { x: 80, y: 60 };
+    _this.assets = ['./resources/detective_walk.json', './resources/detective_stand.png'];
+    _this.direction = 'right';
+    _this.moving = false;
+    _this.loaded = false;
+    return _this;
+  }
+
+  _createClass(Player, [{
+    key: 'loadingDone',
+    value: function loadingDone() {
+      this.walkFrames = [];
+
+      for (var i = 1; i <= 4; i++) {
+        this.walkFrames.push(PIXI.Texture.fromFrame('detective_walk' + i + '.png'));
+      }
+
+      document.addEventListener('keydown', this.move.bind(this));
+      document.addEventListener('keyup', this.stopMoving.bind(this));
+
+      this.walk = new PIXI.extras.MovieClip(this.walkFrames);
+      this.walk.anchor.set(0.5);
+      this.walk.animationSpeed = 0.1;
+
+      this.stand = new PIXI.Sprite.fromImage('./resources/detective_stand.png');
+      this.stand.anchor.set(0.5);
+      this.addChild(this.stand);
+
+      this.loaded = true;
+    }
+  }, {
+    key: 'move',
+    value: function move(event) {
+      if (!this.moving) {
+        if (event.keyCode == 65) {
+          this.direction = 'left';
+          this.addChild(this.walk);
+          this.removeChild(this.stand);
+          this.walk.play();
+          this.moving = true;
+        } else if (event.keyCode == 68) {
+          this.direction = 'right';
+          this.addChild(this.walk);
+          this.removeChild(this.stand);
+          this.walk.play();
+          this.moving = true;
+        }
+      }
+    }
+  }, {
+    key: 'update',
+    value: function update() {
+      if (!this.loaded) {
+        return;
+      }
+
+      if (this.direction == 'right') {
+        this.walk.scale.x = 1;
+        this.stand.scale.x = 1;
+
+        if (this.moving) {
+          this.position.x += 0.2;
+        }
+      } else if (this.direction == 'left') {
+        this.walk.scale.x = -1;
+        this.stand.scale.x = -1;
+
+        if (this.moving) {
+          this.position.x -= 0.2;
+        }
+      }
+    }
+  }, {
+    key: 'stopMoving',
+    value: function stopMoving() {
+      if (this.moving) {
+        if (event.keyCode == 65) {
+          this.removeChild(this.walk);
+          this.addChild(this.stand);
+          this.walk.stop();
+          this.moving = false;
+        } else if (event.keyCode == 68) {
+          this.removeChild(this.walk);
+          this.addChild(this.stand);
+          this.walk.stop();
+          this.moving = false;
+        }
+      }
+    }
+  }]);
+
+  return Player;
+}(PIXI.Container);
+
+},{}],438:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -52579,8 +52679,6 @@ var Scene = exports.Scene = function (_PIXI$Container) {
     _this.window = window;
     _this.paused = false;
     _this.assets = [];
-    _this.initializeLoadingDisplay();
-    _this.updateCallback = function () {};
     return _this;
   }
 
@@ -52588,7 +52686,6 @@ var Scene = exports.Scene = function (_PIXI$Container) {
     key: 'initializeLoadingDisplay',
     value: function initializeLoadingDisplay() {
       this.loaded = false;
-      this.loadingProgress = 0;
       this.loadingContainer = new _pixi2.default.Container();
       this.loadingText = false;
 
@@ -52599,21 +52696,25 @@ var Scene = exports.Scene = function (_PIXI$Container) {
         this.loadingText.position.y = this.window.resolutionHeight / 2 - this.loadingText.height / 2;
 
         this.loadingContainer.addChild(this.loadingText);
+        this.addChild(this.loadingContainer);
       }.bind(this)).load();
+    }
+  }, {
+    key: 'loadingProgress',
+    value: function loadingProgress() {}
+  }, {
+    key: 'loadingDone',
+    value: function loadingDone() {
+      this.loaded = true;
+      this.removeChild(this.loadingContainer);
     }
   }, {
     key: 'load',
     value: function load() {
       var assetLoader = new _asset_loader.AssetLoader();
-      var progress = function (loader, resources) {
-        this.loadingProgress = loader.progress;
-      }.bind(this);
+      this.initializeLoadingDisplay();
 
-      var done = function () {
-        this.loaded = true;
-        this.loadingProgress = 100;
-      }.bind(this);
-      assetLoader.load(this.assets, progress, done);
+      assetLoader.load(this.assets, this.loadingProgress.bind(this), this.loadingDone.bind(this));
     }
   }, {
     key: 'onUpdate',
@@ -52622,9 +52723,7 @@ var Scene = exports.Scene = function (_PIXI$Container) {
     }
   }, {
     key: 'update',
-    value: function update() {
-      this.updateCallback();
-    }
+    value: function update() {}
   }, {
     key: 'pause',
     value: function pause() {
@@ -52635,23 +52734,12 @@ var Scene = exports.Scene = function (_PIXI$Container) {
     value: function resume() {
       this.paused = false;
     }
-  }, {
-    key: 'loadingMessage',
-    get: function get() {
-      if (this.loadingText != false) {
-        this.loadingText.text = 'Loading: ' + Math.floor(this.loadingProgress) + '%';
-        this.loadingText.position.x = this.window.resolutionWidth / 2 - this.loadingText.width / 2;
-        this.loadingText.position.y = this.window.resolutionHeight / 2 - this.loadingText.height / 2;
-      }
-
-      return this.loadingContainer;
-    }
   }]);
 
   return Scene;
 }(_pixi2.default.Container);
 
-},{"./asset_loader":434,"pixi.js":399}],438:[function(require,module,exports){
+},{"./asset_loader":434,"pixi.js":399}],439:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -52676,7 +52764,7 @@ var SceneManager = exports.SceneManager = function () {
     this.scenes = { menu: new _menu.MenuScene(window),
       game: new _game.GameScene(window) };
 
-    this.scene = this.scenes['menu'];
+    this.scene = this.scenes['game'];
   }
 
   _createClass(SceneManager, [{
@@ -52689,13 +52777,6 @@ var SceneManager = exports.SceneManager = function () {
       }
 
       this.scene.update();
-
-      //if (!this.scene.loaded) {
-      this.window.scene = this.scene.loadingMessage;
-      this.renderer.render(this.scene.loadingMessage);
-      return;
-      //}
-
       this.renderer.render(this.scene);
     }
   }, {
@@ -52713,7 +52794,7 @@ var SceneManager = exports.SceneManager = function () {
   return SceneManager;
 }();
 
-},{"./scenes/game":439,"./scenes/menu":440}],439:[function(require,module,exports){
+},{"./scenes/game":440,"./scenes/menu":441}],440:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -52721,7 +52802,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.GameScene = undefined;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _scene = require('../scene');
+
+var _player = require('../player');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -52735,13 +52822,32 @@ var GameScene = exports.GameScene = function (_Scene) {
   function GameScene(window) {
     _classCallCheck(this, GameScene);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(GameScene).call(this, window));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameScene).call(this, window));
+
+    _this.player = new _player.Player();
+    _this.assets = _this.player.assets;
+    return _this;
   }
+
+  _createClass(GameScene, [{
+    key: 'update',
+    value: function update() {
+      _get(Object.getPrototypeOf(GameScene.prototype), 'update', this).call(this);
+      this.player.update();
+    }
+  }, {
+    key: 'loadingDone',
+    value: function loadingDone() {
+      _get(Object.getPrototypeOf(GameScene.prototype), 'loadingDone', this).call(this);
+      this.player.loadingDone();
+      this.addChild(this.player);
+    }
+  }]);
 
   return GameScene;
 }(_scene.Scene);
 
-},{"../scene":437}],440:[function(require,module,exports){
+},{"../player":437,"../scene":438}],441:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -52763,16 +52869,13 @@ var MenuScene = exports.MenuScene = function (_Scene) {
   function MenuScene(window) {
     _classCallCheck(this, MenuScene);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(MenuScene).call(this, window));
-
-    _this.assets = ['./resources/detective_walk.json'];
-    return _this;
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(MenuScene).call(this, window));
   }
 
   return MenuScene;
 }(_scene.Scene);
 
-},{"../scene":437}],441:[function(require,module,exports){
+},{"../scene":438}],442:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -52795,23 +52898,36 @@ var Window = exports.Window = function () {
     this.resize();
 
     document.body.appendChild(this.renderer.view);
-
     window.onresize = this.resize.bind(this);
   }
 
   _createClass(Window, [{
+    key: 'requestFullscreen',
+    value: function requestFullscreen() {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.mozRequestFullScreen) {
+        document.documentElement.mozRequestFullScreen();
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen();
+      } else if (document.documentElement.msRequestFullscreen) {
+        document.documentElement.msRequestFullscreen();
+      }
+    }
+  }, {
     key: 'resize',
     value: function resize() {
       var newWidth = void 0,
           newHeight = void 0;
 
-      if (window.innerWidth / window.innerHeight >= this.ratio) {
-        newWidth = window.innerHeight * this.ratio;
-        newHeight = window.innerHeight;
+      if (document.body.clientWidth / document.body.clientHeight >= this.ratio) {
+        newWidth = document.body.clientHeight * this.ratio;
+        newHeight = document.body.clientHeight;
       } else {
-        newWidth = window.innerWidth;
-        newHeight = window.innerWidth / this.ratio;
+        newWidth = document.body.clientWidth;
+        newHeight = document.body.clientWidth / this.ratio;
       }
+
       this.resizeRenderer(newWidth, newHeight);
       this.resizeScene(newWidth, newHeight);
     }
@@ -52821,8 +52937,8 @@ var Window = exports.Window = function () {
       this.renderer.view.style.width = w + 'px';
       this.renderer.view.style.height = h + 'px';
       this.renderer.view.style.position = 'absolute';
-      this.renderer.view.style.left = (window.innerWidth - w >> 1) + 'px';
-      this.renderer.view.style.top = (window.innerHeight - h >> 1) + 'px';
+      this.renderer.view.style.left = (document.body.clientWidth - w >> 1) + 'px';
+      this.renderer.view.style.top = (document.body.clientHeight - h >> 1) + 'px';
 
       this.renderer.resize(w, h);
     }

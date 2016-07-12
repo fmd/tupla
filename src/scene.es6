@@ -7,13 +7,10 @@ export class Scene extends PIXI.Container {
     this.window = window
     this.paused = false
     this.assets = []
-    this.initializeLoadingDisplay()
-    this.updateCallback = function() {  }
   }
 
   initializeLoadingDisplay() {
     this.loaded = false
-    this.loadingProgress = 0
     this.loadingContainer = new PIXI.Container()
     this.loadingText = false
 
@@ -26,31 +23,27 @@ export class Scene extends PIXI.Container {
         this.loadingText.position.y = this.window.resolutionHeight / 2 - this.loadingText.height / 2;
 
         this.loadingContainer.addChild(this.loadingText)
+        this.addChild(this.loadingContainer)
       }.bind(this))
       .load()
   }
 
-  get loadingMessage() {
-    if (this.loadingText != false) {
-      this.loadingText.text = 'Loading: ' + Math.floor(this.loadingProgress) + '%'
-      this.loadingText.position.x = this.window.resolutionWidth / 2 - this.loadingText.width / 2;
-      this.loadingText.position.y = this.window.resolutionHeight / 2 - this.loadingText.height / 2;
-    }
+  loadingProgress() {
 
-    return this.loadingContainer
+  }
+
+  loadingDone() {
+    this.loaded = true
+    this.removeChild(this.loadingContainer)
   }
 
   load() {
     let assetLoader = new AssetLoader()
-    let progress = function(loader, resources) {
-      this.loadingProgress = loader.progress
-    }.bind(this)
+    this.initializeLoadingDisplay()
 
-    let done = function() {
-      this.loaded = true
-      this.loadingProgress = 100
-     }.bind(this)
-    assetLoader.load(this.assets, progress, done)
+    assetLoader.load(this.assets,
+                     this.loadingProgress.bind(this),
+                     this.loadingDone.bind(this))
   }
 
   onUpdate(callback) {
@@ -58,7 +51,7 @@ export class Scene extends PIXI.Container {
   }
 
   update() {
-    this.updateCallback()
+
   }
 
   pause() {
