@@ -1,16 +1,16 @@
 'use strict';
 
-var watchify = require('watchify');
-var browserify = require('browserify');
-var gulp = require('gulp');
 var babelify = require('babelify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var gutil = require('gulp-util');
-var sourcemaps = require('gulp-sourcemaps');
-var _ = require('lodash');
-var path = require('path');
+var browserify = require('browserify');
 var brfs = require('brfs');
+var gulp = require('gulp');
+var sourcemaps = require('gulp-sourcemaps');
+var gutil = require('gulp-util');
+var lodash = require('lodash');
+var path = require('path');
+var buffer = require('vinyl-buffer');
+var source = require('vinyl-source-stream');
+var watchify = require('watchify');
 
 var customOpts = {
   entries: ['./src/index.es6'],
@@ -25,7 +25,7 @@ var babelOpts = {
   sourceMapRelative: path.resolve(__dirname, 'src')
 };
 
-var opts = _.assign({}, watchify.args, customOpts);
+var opts = lodash.assign({}, watchify.args, customOpts);
 var b = watchify(browserify(opts))
 
 b.transform(babelify.configure(babelOpts));

@@ -1,2 +1,5 @@
-let a = 1
-console.log(a)
+import 'babel-polyfill'
+import { Game } from './game'
+
+let game = new Game()
+game.play()
