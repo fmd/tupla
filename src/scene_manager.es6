@@ -24,14 +24,13 @@ export class SceneManager {
     }
 
     this.scene.update()
-    this.renderer.render(this.scene)
+    this.window.render(this.scene)
     this.lastTimestamp = timestamp
   }
 
   set scene(scene) {
     scene.load()
     this._scene = scene
-    this.window.scene = scene
   }
 
   get scene() {

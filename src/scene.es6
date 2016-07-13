@@ -16,7 +16,7 @@ export class Scene extends PIXI.Container {
 
     PIXI.loader.reset()
     PIXI.loader
-      .add('./resources/fonts/classified.fnt')
+      .add('resources/assets/fonts/classified.fnt')
       .once('complete', function(loader, resources) {
         this.loadingText = new PIXI.extras.BitmapText('Loading...', { font: '16pt Classified' })
         this.loadingText.position.x = this.window.resolutionWidth / 2 - this.loadingText.width / 2;
@@ -40,6 +40,7 @@ export class Scene extends PIXI.Container {
 
   loadingDone(loader, resources) {
     this.loaded = true
+    this.loadingContainer.removeChild(this.loadingText)
     this.removeChild(this.loadingContainer)
   }
 

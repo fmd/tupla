@@ -6,7 +6,11 @@ export class GameScene extends Scene {
   constructor(window) {
     super(window)
     this.player = new Player()
-    this.assets = flatten([this.player.assets, './resources/basement_objects.json'])
+    this.assets = flatten([this.player.assets,
+                           'resources/assets/basement_objects.json',
+                           'resources/assets/fonts/classified.fnt',
+                           'resources/assets/fonts/curse.fnt',
+                           'resources/assets/fonts/little_league.fnt'])
     this.sprites = {}
   }
 
@@ -17,7 +21,6 @@ export class GameScene extends Scene {
 
   loadingDone(loader, resources) {
     super.loadingDone(loader, resources)
-    console.log(resources)
 
     this.wallTexture = PIXI.Texture.fromFrame('dark_wall.png')
     this.wall = new PIXI.TilingSprite(this.wallTexture, 240, 80)
@@ -28,6 +31,11 @@ export class GameScene extends Scene {
     this.shelves.anchor.set(0.5)
     this.shelves.position = { x: 50, y: 54 }
     this.addChild(this.shelves)
+
+    this.mirror = new PIXI.Sprite.fromFrame('broken_mirror.png')
+    this.mirror.anchor.set(0.5)
+    this.mirror.position = { x: 100, y: 50 }
+    this.addChild(this.mirror)
 
     this.table = new PIXI.Sprite.fromFrame('pig_table.png')
     this.table.anchor.set(0.5)

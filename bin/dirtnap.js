@@ -52552,7 +52552,7 @@ var Player = exports.Player = function (_PIXI$Container) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Player).call(this));
 
     _this.decimalPosition = { x: 80.0, y: 60.0 };
-    _this.assets = ['./resources/detective_walk.json', './resources/detective_stand.png'];
+    _this.assets = ['resources/assets/detective_walk.json', 'resources/assets/detective_stand.png'];
     _this.direction = 'right';
     _this.moving = false;
     _this.loaded = false;
@@ -52575,7 +52575,7 @@ var Player = exports.Player = function (_PIXI$Container) {
       this.walk.anchor.set(0.5);
       this.walk.animationSpeed = 0.1;
 
-      this.stand = new PIXI.Sprite.fromImage('./resources/detective_stand.png');
+      this.stand = new PIXI.Sprite.fromImage('resources/assets/detective_stand.png');
       this.stand.anchor.set(0.5);
       this.addChild(this.stand);
 
@@ -52623,8 +52623,8 @@ var Player = exports.Player = function (_PIXI$Container) {
         }
       }
 
-      this.position = { x: Math.round(this.decimalPosition.x),
-        y: Math.round(this.decimalPosition.y) };
+      this.position = { x: this.decimalPosition.x,
+        y: this.decimalPosition.y };
     }
   }, {
     key: 'stopMoving',
@@ -52694,7 +52694,7 @@ var Scene = exports.Scene = function (_PIXI$Container) {
       this.loadingText = false;
 
       _pixi2.default.loader.reset();
-      _pixi2.default.loader.add('./resources/fonts/classified.fnt').once('complete', function (loader, resources) {
+      _pixi2.default.loader.add('resources/assets/fonts/classified.fnt').once('complete', function (loader, resources) {
         this.loadingText = new _pixi2.default.extras.BitmapText('Loading...', { font: '16pt Classified' });
         this.loadingText.position.x = this.window.resolutionWidth / 2 - this.loadingText.width / 2;
         this.loadingText.position.y = this.window.resolutionHeight / 2 - this.loadingText.height / 2;
@@ -52714,6 +52714,7 @@ var Scene = exports.Scene = function (_PIXI$Container) {
     key: 'loadingDone',
     value: function loadingDone(loader, resources) {
       this.loaded = true;
+      this.loadingContainer.removeChild(this.loadingText);
       this.removeChild(this.loadingContainer);
     }
   }, {
@@ -52782,7 +52783,7 @@ var SceneManager = exports.SceneManager = function () {
       }
 
       this.scene.update();
-      this.renderer.render(this.scene);
+      this.window.render(this.scene);
       this.lastTimestamp = timestamp;
     }
   }, {
@@ -52790,7 +52791,6 @@ var SceneManager = exports.SceneManager = function () {
     set: function set(scene) {
       scene.load();
       this._scene = scene;
-      this.window.scene = scene;
     },
     get: function get() {
       return this._scene;
@@ -52835,7 +52835,7 @@ var GameScene = exports.GameScene = function (_Scene) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameScene).call(this, window));
 
     _this.player = new _player.Player();
-    _this.assets = (0, _lodash.flatten)([_this.player.assets, './resources/basement_objects.json']);
+    _this.assets = (0, _lodash.flatten)([_this.player.assets, 'resources/assets/basement_objects.json', 'resources/assets/fonts/classified.fnt', 'resources/assets/fonts/curse.fnt', 'resources/assets/fonts/little_league.fnt']);
     _this.sprites = {};
     return _this;
   }
@@ -52850,7 +52850,6 @@ var GameScene = exports.GameScene = function (_Scene) {
     key: 'loadingDone',
     value: function loadingDone(loader, resources) {
       _get(Object.getPrototypeOf(GameScene.prototype), 'loadingDone', this).call(this, loader, resources);
-      console.log(resources);
 
       this.wallTexture = PIXI.Texture.fromFrame('dark_wall.png');
       this.wall = new PIXI.TilingSprite(this.wallTexture, 240, 80);
@@ -52861,6 +52860,11 @@ var GameScene = exports.GameScene = function (_Scene) {
       this.shelves.anchor.set(0.5);
       this.shelves.position = { x: 50, y: 54 };
       this.addChild(this.shelves);
+
+      this.mirror = new PIXI.Sprite.fromFrame('broken_mirror.png');
+      this.mirror.anchor.set(0.5);
+      this.mirror.position = { x: 100, y: 50 };
+      this.addChild(this.mirror);
 
       this.table = new PIXI.Sprite.fromFrame('pig_table.png');
       this.table.anchor.set(0.5);
@@ -52922,7 +52926,11 @@ var Window = exports.Window = function () {
     this.resolutionWidth = width;
     this.resolutionHeight = height;
     this.ratio = width / height;
-    this._scene = null;
+
+    this.renderTexture = new PIXI.RenderTexture(this.renderer, this.resolutionWidth, this.resolutionHeight);
+
+    this.renderTarget = new PIXI.Sprite(this.renderTexture, this.resolutionWidth, this.resolutionHeight);
+
     this.resize();
 
     document.body.appendChild(this.renderer.view);
@@ -52941,6 +52949,13 @@ var Window = exports.Window = function () {
       } else if (document.documentElement.msRequestFullscreen) {
         document.documentElement.msRequestFullscreen();
       }
+    }
+  }, {
+    key: 'render',
+    value: function render(scene) {
+      this.renderTexture.clear();
+      this.renderTexture.render(scene);
+      this.renderer.render(this.renderTarget);
     }
   }, {
     key: 'resize',
@@ -52973,19 +52988,10 @@ var Window = exports.Window = function () {
   }, {
     key: 'resizeScene',
     value: function resizeScene(w, h) {
-      if (this.scene !== null) {
-        this.scene.scale.x = w / this.resolutionWidth;
-        this.scene.scale.y = h / this.resolutionHeight;
+      if (this.renderTarget !== null) {
+        this.renderTarget.scale.x = w / this.resolutionWidth;
+        this.renderTarget.scale.y = h / this.resolutionHeight;
       }
-    }
-  }, {
-    key: 'scene',
-    get: function get() {
-      return this._scene;
-    },
-    set: function set(scene) {
-      this._scene = scene;
-      this.resize();
     }
   }]);
 

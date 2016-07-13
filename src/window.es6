@@ -4,7 +4,15 @@ export class Window {
     this.resolutionWidth = width
     this.resolutionHeight = height
     this.ratio = width / height
-    this._scene = null
+
+    this.renderTexture = new PIXI.RenderTexture(this.renderer,
+                                                this.resolutionWidth,
+                                                this.resolutionHeight)
+
+    this.renderTarget = new PIXI.Sprite(this.renderTexture,
+                                        this.resolutionWidth,
+                                        this.resolutionHeight)
+
     this.resize()
 
     document.body.appendChild(this.renderer.view)
@@ -23,13 +31,10 @@ export class Window {
     }
   }
 
-  get scene() {
-    return this._scene
-  }
-
-  set scene(scene) {
-    this._scene = scene
-    this.resize()
+  render(scene) {
+    this.renderTexture.clear()
+    this.renderTexture.render(scene)
+    this.renderer.render(this.renderTarget)
   }
 
   resize() {
@@ -58,9 +63,9 @@ export class Window {
   }
 
   resizeScene(w, h) {
-    if (this.scene !== null) {
-      this.scene.scale.x = w / this.resolutionWidth
-      this.scene.scale.y = h / this.resolutionHeight
+    if (this.renderTarget !== null) {
+      this.renderTarget.scale.x = w / this.resolutionWidth
+      this.renderTarget.scale.y = h / this.resolutionHeight
     }
   }
 }

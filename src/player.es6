@@ -4,7 +4,7 @@ export class Player extends PIXI.Container {
   constructor() {
     super()
     this.decimalPosition = { x: 80.0, y: 60.0 }
-    this.assets = ['./resources/detective_walk.json', './resources/detective_stand.png']
+    this.assets = ['resources/assets/detective_walk.json', 'resources/assets/detective_stand.png']
     this.direction = 'right'
     this.moving = false
     this.loaded = false
@@ -24,7 +24,7 @@ export class Player extends PIXI.Container {
     this.walk.anchor.set(0.5)
     this.walk.animationSpeed = 0.1
 
-    this.stand = new PIXI.Sprite.fromImage('./resources/detective_stand.png')
+    this.stand = new PIXI.Sprite.fromImage('resources/assets/detective_stand.png')
     this.stand.anchor.set(0.5)
     this.addChild(this.stand)
 
@@ -70,8 +70,8 @@ export class Player extends PIXI.Container {
         }
       }
 
-      this.position = { x: Math.round(this.decimalPosition.x),
-                        y: Math.round(this.decimalPosition.y) }
+      this.position = { x: this.decimalPosition.x,
+                        y: this.decimalPosition.y }
   }
 
   stopMoving() {
