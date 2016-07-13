@@ -9,9 +9,14 @@ export class SceneManager {
                     game: new GameScene(window) }
 
     this.scene = this.scenes['game']
+    this.lastTimestamp = null
   }
 
-  loop() {
+  loop(timestamp) {
+    if (this.lastTimestamp !== null) {
+      SceneManager.deltaTime = timestamp - this.lastTimestamp
+    }
+
     requestAnimationFrame(this.loop.bind(this));
 
     if (!this.scene || this.scene.paused) {
@@ -20,6 +25,7 @@ export class SceneManager {
 
     this.scene.update()
     this.renderer.render(this.scene)
+    this.lastTimestamp = timestamp
   }
 
   set scene(scene) {
@@ -32,3 +38,5 @@ export class SceneManager {
     return this._scene
   }
 }
+
+SceneManager.deltaTime = null

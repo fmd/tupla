@@ -41615,7 +41615,7 @@ function TilingSprite(texture, width, height)
         'void main(void){',
 
         '   vec2 coord = mod(vTextureCoord, uFrame.zw);',
-        '   coord = clamp(coord, uPixelSize, uFrame.zw - uPixelSize);',
+        // '   coord = clamp(coord, uPixelSize, uFrame.zw - uPixelSize);',
         '   coord += uFrame.xy;',
 
         '   gl_FragColor =  texture2D(uSampler, coord) * vColor ;',
@@ -52436,13 +52436,11 @@ var AssetLoader = exports.AssetLoader = function () {
   }, {
     key: 'loadingProgress',
     value: function loadingProgress(callback, loader, resource) {
-      console.log('Loading: ' + loader.progress + '%');
       callback(loader, resource);
     }
   }, {
     key: 'loadingComplete',
     value: function loadingComplete(callback, loader, resources) {
-      console.log('Loading: ' + loader.progress + '%');
       callback(loader, resources);
     }
   }]);
@@ -52533,8 +52531,11 @@ game.play();
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Player = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _scene_manager = require('./scene_manager');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -52550,7 +52551,7 @@ var Player = exports.Player = function (_PIXI$Container) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Player).call(this));
 
-    _this.position = { x: 80, y: 60 };
+    _this.decimalPosition = { x: 80.0, y: 60.0 };
     _this.assets = ['./resources/detective_walk.json', './resources/detective_stand.png'];
     _this.direction = 'right';
     _this.moving = false;
@@ -52611,16 +52612,19 @@ var Player = exports.Player = function (_PIXI$Container) {
         this.stand.scale.x = 1;
 
         if (this.moving) {
-          this.position.x += 0.2;
+          this.decimalPosition.x += 0.02 * _scene_manager.SceneManager.deltaTime;
         }
       } else if (this.direction == 'left') {
         this.walk.scale.x = -1;
         this.stand.scale.x = -1;
 
         if (this.moving) {
-          this.position.x -= 0.2;
+          this.decimalPosition.x -= 0.02 * _scene_manager.SceneManager.deltaTime;
         }
       }
+
+      this.position = { x: Math.round(this.decimalPosition.x),
+        y: Math.round(this.decimalPosition.y) };
     }
   }, {
     key: 'stopMoving',
@@ -52644,7 +52648,7 @@ var Player = exports.Player = function (_PIXI$Container) {
   return Player;
 }(PIXI.Container);
 
-},{}],438:[function(require,module,exports){
+},{"./scene_manager":439}],438:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -52697,29 +52701,25 @@ var Scene = exports.Scene = function (_PIXI$Container) {
 
         this.loadingContainer.addChild(this.loadingText);
         this.addChild(this.loadingContainer);
+
+        var assetLoader = new _asset_loader.AssetLoader();
+
+        assetLoader.load(this.assets, this.loadingProgress.bind(this), this.loadingDone.bind(this));
       }.bind(this)).load();
     }
   }, {
     key: 'loadingProgress',
-    value: function loadingProgress() {}
+    value: function loadingProgress(loader, resource) {}
   }, {
     key: 'loadingDone',
-    value: function loadingDone() {
+    value: function loadingDone(loader, resources) {
       this.loaded = true;
       this.removeChild(this.loadingContainer);
     }
   }, {
     key: 'load',
     value: function load() {
-      var assetLoader = new _asset_loader.AssetLoader();
       this.initializeLoadingDisplay();
-
-      assetLoader.load(this.assets, this.loadingProgress.bind(this), this.loadingDone.bind(this));
-    }
-  }, {
-    key: 'onUpdate',
-    value: function onUpdate(callback) {
-      this.updateCallback = callback;
     }
   }, {
     key: 'update',
@@ -52765,11 +52765,16 @@ var SceneManager = exports.SceneManager = function () {
       game: new _game.GameScene(window) };
 
     this.scene = this.scenes['game'];
+    this.lastTimestamp = null;
   }
 
   _createClass(SceneManager, [{
     key: 'loop',
-    value: function loop() {
+    value: function loop(timestamp) {
+      if (this.lastTimestamp !== null) {
+        SceneManager.deltaTime = timestamp - this.lastTimestamp;
+      }
+
       requestAnimationFrame(this.loop.bind(this));
 
       if (!this.scene || this.scene.paused) {
@@ -52778,6 +52783,7 @@ var SceneManager = exports.SceneManager = function () {
 
       this.scene.update();
       this.renderer.render(this.scene);
+      this.lastTimestamp = timestamp;
     }
   }, {
     key: 'scene',
@@ -52793,6 +52799,8 @@ var SceneManager = exports.SceneManager = function () {
 
   return SceneManager;
 }();
+
+SceneManager.deltaTime = null;
 
 },{"./scenes/game":440,"./scenes/menu":441}],440:[function(require,module,exports){
 'use strict';
@@ -52810,6 +52818,8 @@ var _scene = require('../scene');
 
 var _player = require('../player');
 
+var _lodash = require('lodash');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -52825,7 +52835,8 @@ var GameScene = exports.GameScene = function (_Scene) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameScene).call(this, window));
 
     _this.player = new _player.Player();
-    _this.assets = _this.player.assets;
+    _this.assets = (0, _lodash.flatten)([_this.player.assets, './resources/basement_objects.json']);
+    _this.sprites = {};
     return _this;
   }
 
@@ -52837,8 +52848,25 @@ var GameScene = exports.GameScene = function (_Scene) {
     }
   }, {
     key: 'loadingDone',
-    value: function loadingDone() {
-      _get(Object.getPrototypeOf(GameScene.prototype), 'loadingDone', this).call(this);
+    value: function loadingDone(loader, resources) {
+      _get(Object.getPrototypeOf(GameScene.prototype), 'loadingDone', this).call(this, loader, resources);
+      console.log(resources);
+
+      this.wallTexture = PIXI.Texture.fromFrame('dark_wall.png');
+      this.wall = new PIXI.TilingSprite(this.wallTexture, 240, 80);
+      this.wall.position = { x: 0, y: -10 };
+      this.addChild(this.wall);
+
+      this.shelves = new PIXI.Sprite.fromFrame('bloody_shelves.png');
+      this.shelves.anchor.set(0.5);
+      this.shelves.position = { x: 50, y: 54 };
+      this.addChild(this.shelves);
+
+      this.table = new PIXI.Sprite.fromFrame('pig_table.png');
+      this.table.anchor.set(0.5);
+      this.table.position = { x: 150, y: 54 };
+      this.addChild(this.table);
+
       this.player.loadingDone();
       this.addChild(this.player);
     }
@@ -52847,7 +52875,7 @@ var GameScene = exports.GameScene = function (_Scene) {
   return GameScene;
 }(_scene.Scene);
 
-},{"../player":437,"../scene":438}],441:[function(require,module,exports){
+},{"../player":437,"../scene":438,"lodash":300}],441:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

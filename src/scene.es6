@@ -24,30 +24,27 @@ export class Scene extends PIXI.Container {
 
         this.loadingContainer.addChild(this.loadingText)
         this.addChild(this.loadingContainer)
+
+        let assetLoader = new AssetLoader()
+
+        assetLoader.load(this.assets,
+                         this.loadingProgress.bind(this),
+                         this.loadingDone.bind(this))
       }.bind(this))
       .load()
   }
 
-  loadingProgress() {
+  loadingProgress(loader, resource) {
 
   }
 
-  loadingDone() {
+  loadingDone(loader, resources) {
     this.loaded = true
     this.removeChild(this.loadingContainer)
   }
 
   load() {
-    let assetLoader = new AssetLoader()
     this.initializeLoadingDisplay()
-
-    assetLoader.load(this.assets,
-                     this.loadingProgress.bind(this),
-                     this.loadingDone.bind(this))
-  }
-
-  onUpdate(callback) {
-    this.updateCallback = callback
   }
 
   update() {

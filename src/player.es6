@@ -1,7 +1,9 @@
+import { SceneManager } from './scene_manager'
+
 export class Player extends PIXI.Container {
   constructor() {
     super()
-    this.position = { x: 80, y: 60 }
+    this.decimalPosition = { x: 80.0, y: 60.0 }
     this.assets = ['./resources/detective_walk.json', './resources/detective_stand.png']
     this.direction = 'right'
     this.moving = false
@@ -57,16 +59,19 @@ export class Player extends PIXI.Container {
         this.stand.scale.x = 1
 
         if (this.moving) {
-          this.position.x += 0.2
+          this.decimalPosition.x += 0.02 * SceneManager.deltaTime
         }
       } else if (this.direction == 'left') {
         this.walk.scale.x = -1
         this.stand.scale.x = -1
 
         if (this.moving) {
-          this.position.x -= 0.2
+          this.decimalPosition.x -= 0.02 * SceneManager.deltaTime
         }
       }
+
+      this.position = { x: Math.round(this.decimalPosition.x),
+                        y: Math.round(this.decimalPosition.y) }
   }
 
   stopMoving() {

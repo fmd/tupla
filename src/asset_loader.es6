@@ -19,12 +19,10 @@ export class AssetLoader {
   }
 
   loadingProgress(callback, loader, resource) {
-    console.log('Loading: ' + loader.progress + '%')
     callback(loader, resource)
   }
 
   loadingComplete(callback, loader, resources) {
-    console.log('Loading: ' + loader.progress + '%')
     callback(loader, resources)
   }
 }
