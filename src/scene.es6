@@ -16,9 +16,9 @@ export class Scene extends PIXI.Container {
 
     PIXI.loader.reset()
     PIXI.loader
-      .add('resources/assets/fonts/classified.fnt')
+      .add('resources/assets/fonts/little_league.fnt')
       .once('complete', function(loader, resources) {
-        this.loadingText = new PIXI.extras.BitmapText('Loading...', { font: '16pt Classified' })
+        this.loadingText = new PIXI.extras.BitmapText('Loading...', { font: '10pt Little-League' })
         this.loadingText.position.x = this.window.resolutionWidth / 2 - this.loadingText.width / 2;
         this.loadingText.position.y = this.window.resolutionHeight / 2 - this.loadingText.height / 2;
 
@@ -35,7 +35,7 @@ export class Scene extends PIXI.Container {
   }
 
   loadingProgress(loader, resource) {
-
+    // noop
   }
 
   loadingDone(loader, resources) {
@@ -45,7 +45,11 @@ export class Scene extends PIXI.Container {
   }
 
   load() {
-    this.initializeLoadingDisplay()
+    if (this.assets.length > 0) {
+      this.initializeLoadingDisplay()
+    } else {
+      this.loaded = true
+    }
   }
 
   update() {

@@ -52694,7 +52694,7 @@ var Game = exports.Game = function () {
   return Game;
 }();
 
-},{"./scene_manager":438,"./window":441,"pixi.js":413}],435:[function(require,module,exports){
+},{"./scene_manager":437,"./window":440,"pixi.js":413}],435:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -52705,129 +52705,6 @@ var game = new _game.Game();
 game.play();
 
 },{"./game":434,"babel-polyfill":1}],436:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Player = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _scene_manager = require('./scene_manager');
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Player = exports.Player = function (_PIXI$Container) {
-  _inherits(Player, _PIXI$Container);
-
-  function Player() {
-    _classCallCheck(this, Player);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Player).call(this));
-
-    _this.decimalPosition = { x: 80.0, y: 60.0 };
-    _this.assets = ['resources/assets/detective_walk.json', 'resources/assets/detective_stand.png'];
-    _this.direction = 'right';
-    _this.moving = false;
-    _this.loaded = false;
-    return _this;
-  }
-
-  _createClass(Player, [{
-    key: 'loadingDone',
-    value: function loadingDone() {
-      this.walkFrames = [];
-
-      for (var i = 1; i <= 4; i++) {
-        this.walkFrames.push(PIXI.Texture.fromFrame('detective_walk' + i + '.png'));
-      }
-
-      document.addEventListener('keydown', this.move.bind(this));
-      document.addEventListener('keyup', this.stopMoving.bind(this));
-
-      this.walk = new PIXI.extras.MovieClip(this.walkFrames);
-      this.walk.anchor.set(0.5);
-      this.walk.animationSpeed = 0.1;
-
-      this.stand = new PIXI.Sprite.fromImage('resources/assets/detective_stand.png');
-      this.stand.anchor.set(0.5);
-      this.addChild(this.stand);
-
-      this.loaded = true;
-    }
-  }, {
-    key: 'move',
-    value: function move(event) {
-      if (!this.moving) {
-        if (event.keyCode == 65) {
-          this.direction = 'left';
-          this.addChild(this.walk);
-          this.removeChild(this.stand);
-          this.walk.play();
-          this.moving = true;
-        } else if (event.keyCode == 68) {
-          this.direction = 'right';
-          this.addChild(this.walk);
-          this.removeChild(this.stand);
-          this.walk.play();
-          this.moving = true;
-        }
-      }
-    }
-  }, {
-    key: 'update',
-    value: function update() {
-      if (!this.loaded) {
-        return;
-      }
-
-      if (this.direction == 'right') {
-        this.walk.scale.x = 1;
-        this.stand.scale.x = 1;
-
-        if (this.moving) {
-          this.decimalPosition.x += 0.02 * _scene_manager.SceneManager.deltaTime;
-        }
-      } else if (this.direction == 'left') {
-        this.walk.scale.x = -1;
-        this.stand.scale.x = -1;
-
-        if (this.moving) {
-          this.decimalPosition.x -= 0.02 * _scene_manager.SceneManager.deltaTime;
-        }
-      }
-
-      this.position = { x: this.decimalPosition.x,
-        y: this.decimalPosition.y };
-    }
-  }, {
-    key: 'stopMoving',
-    value: function stopMoving() {
-      if (this.moving) {
-        if (event.keyCode == 65) {
-          this.removeChild(this.walk);
-          this.addChild(this.stand);
-          this.walk.stop();
-          this.moving = false;
-        } else if (event.keyCode == 68) {
-          this.removeChild(this.walk);
-          this.addChild(this.stand);
-          this.walk.stop();
-          this.moving = false;
-        }
-      }
-    }
-  }]);
-
-  return Player;
-}(PIXI.Container);
-
-},{"./scene_manager":438}],437:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -52873,8 +52750,8 @@ var Scene = exports.Scene = function (_PIXI$Container) {
       this.loadingText = false;
 
       _pixi2.default.loader.reset();
-      _pixi2.default.loader.add('resources/assets/fonts/classified.fnt').once('complete', function (loader, resources) {
-        this.loadingText = new _pixi2.default.extras.BitmapText('Loading...', { font: '16pt Classified' });
+      _pixi2.default.loader.add('resources/assets/fonts/little_league.fnt').once('complete', function (loader, resources) {
+        this.loadingText = new _pixi2.default.extras.BitmapText('Loading...', { font: '10pt Little-League' });
         this.loadingText.position.x = this.window.resolutionWidth / 2 - this.loadingText.width / 2;
         this.loadingText.position.y = this.window.resolutionHeight / 2 - this.loadingText.height / 2;
 
@@ -52888,7 +52765,9 @@ var Scene = exports.Scene = function (_PIXI$Container) {
     }
   }, {
     key: 'loadingProgress',
-    value: function loadingProgress(loader, resource) {}
+    value: function loadingProgress(loader, resource) {
+      // noop
+    }
   }, {
     key: 'loadingDone',
     value: function loadingDone(loader, resources) {
@@ -52899,7 +52778,11 @@ var Scene = exports.Scene = function (_PIXI$Container) {
   }, {
     key: 'load',
     value: function load() {
-      this.initializeLoadingDisplay();
+      if (this.assets.length > 0) {
+        this.initializeLoadingDisplay();
+      } else {
+        this.loaded = true;
+      }
     }
   }, {
     key: 'update',
@@ -52919,7 +52802,7 @@ var Scene = exports.Scene = function (_PIXI$Container) {
   return Scene;
 }(_pixi2.default.Container);
 
-},{"./asset_loader":433,"pixi.js":413}],438:[function(require,module,exports){
+},{"./asset_loader":433,"pixi.js":413}],437:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -52981,7 +52864,7 @@ var SceneManager = exports.SceneManager = function () {
 
 SceneManager.deltaTime = null;
 
-},{"./scenes/game":439,"./scenes/menu":440}],439:[function(require,module,exports){
+},{"./scenes/game":438,"./scenes/menu":439}],438:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -52994,8 +52877,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 var _scene = require('../scene');
-
-var _player = require('../player');
 
 var _lodash = require('lodash');
 
@@ -53013,8 +52894,7 @@ var GameScene = exports.GameScene = function (_Scene) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameScene).call(this, window));
 
-    _this.player = new _player.Player();
-    _this.assets = (0, _lodash.flatten)([_this.player.assets, 'resources/assets/basement_objects.json', 'resources/assets/fonts/classified.fnt', 'resources/assets/fonts/curse.fnt', 'resources/assets/fonts/little_league.fnt']);
+    _this.assets = (0, _lodash.flatten)([]);
     _this.sprites = {};
     return _this;
   }
@@ -53023,42 +52903,18 @@ var GameScene = exports.GameScene = function (_Scene) {
     key: 'update',
     value: function update() {
       _get(Object.getPrototypeOf(GameScene.prototype), 'update', this).call(this);
-      this.player.update();
     }
   }, {
     key: 'loadingDone',
     value: function loadingDone(loader, resources) {
       _get(Object.getPrototypeOf(GameScene.prototype), 'loadingDone', this).call(this, loader, resources);
-
-      this.wallTexture = PIXI.Texture.fromFrame('dark_wall.png');
-      this.wall = new PIXI.TilingSprite(this.wallTexture, 240, 80);
-      this.wall.position = { x: 0, y: -10 };
-      this.addChild(this.wall);
-
-      this.shelves = new PIXI.Sprite.fromFrame('bloody_shelves.png');
-      this.shelves.anchor.set(0.5);
-      this.shelves.position = { x: 50, y: 54 };
-      this.addChild(this.shelves);
-
-      this.mirror = new PIXI.Sprite.fromFrame('broken_mirror.png');
-      this.mirror.anchor.set(0.5);
-      this.mirror.position = { x: 100, y: 50 };
-      this.addChild(this.mirror);
-
-      this.table = new PIXI.Sprite.fromFrame('pig_table.png');
-      this.table.anchor.set(0.5);
-      this.table.position = { x: 150, y: 54 };
-      this.addChild(this.table);
-
-      this.player.loadingDone();
-      this.addChild(this.player);
     }
   }]);
 
   return GameScene;
 }(_scene.Scene);
 
-},{"../player":436,"../scene":437,"lodash":305}],440:[function(require,module,exports){
+},{"../scene":436,"lodash":305}],439:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -53086,7 +52942,7 @@ var MenuScene = exports.MenuScene = function (_Scene) {
   return MenuScene;
 }(_scene.Scene);
 
-},{"../scene":437}],441:[function(require,module,exports){
+},{"../scene":436}],440:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -53180,4 +53036,4 @@ var Window = exports.Window = function () {
 },{}]},{},[435])
 
 
-//# sourceMappingURL=dirtnap.js.map
+//# sourceMappingURL=index.js.map
