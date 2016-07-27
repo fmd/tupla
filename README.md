@@ -3,10 +3,11 @@
 WIP game
 
 #TODO
+Fix camera jumping (jump straight up to see what i mean)
+Move jump logic to jump class
 Refactor point-to-world code
 Color class
 Prefix private methods with underscores
-Move jump logic to jump class
 
 ## Installation
 `npm install`
