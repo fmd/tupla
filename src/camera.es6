@@ -10,6 +10,10 @@ export class Camera extends PIXI.Point {
     this.lockMethod = null
   }
 
+  offsetMousePosition(point) {
+    return new PIXI.Point(this.x + point.x, this.y + point.y)
+  }
+
   update(scene) {
     if (this.target && this.lockMethod) {
       this.lockMethod()

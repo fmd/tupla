@@ -13,6 +13,8 @@ export class Window {
                                         this.resolutionWidth,
                                         this.resolutionHeight)
 
+    this.clientWidth = document.body.clientWidth
+    this.clientHeight = document.body.clientHeight
     this.resize()
 
     document.body.appendChild(this.renderer.view)
@@ -38,14 +40,17 @@ export class Window {
   }
 
   resize() {
+    this.clientWidth = document.body.clientWidth
+    this.clientHeight = document.body.clientHeight
+
     let newWidth, newHeight
 
-    if (document.body.clientWidth / document.body.clientHeight >= this.ratio) {
-      newWidth = document.body.clientHeight * this.ratio
-      newHeight = document.body.clientHeight
+    if (this.clientWidth / this.clientHeight >= this.ratio) {
+      newWidth = this.clientHeight * this.ratio
+      newHeight = this.clientHeight
     } else {
-      newWidth = document.body.clientWidth
-      newHeight = document.body.clientWidth / this.ratio
+      newWidth = this.clientWidth
+      newHeight = this.clientWidth / this.ratio
     }
 
     this.resizeRenderer(newWidth, newHeight)

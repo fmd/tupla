@@ -4,11 +4,11 @@ import { MenuScene } from './scenes/menu'
 import { GameScene } from './scenes/game'
 
 export class SceneManager {
-  constructor(window, renderer) {
-    this.window = window
+  constructor(win, renderer) {
+    this.window = win
     this.renderer = renderer
-    this.scenes = { menu: new MenuScene(window),
-                    game: new GameScene(window) }
+
+    this.scenes = { game: new GameScene(win, renderer.plugins.interaction) }
 
     this.sceneWrapper = new PIXI.Container()
     this.scene = this.scenes['game']

@@ -3,12 +3,22 @@ import { AssetLoader } from './asset_loader'
 import { Camera } from './camera'
 
 export class Scene extends PIXI.Container {
-  constructor(window) {
+  constructor(window, interaction) {
     super()
     this.window = window
+    this.interaction = interaction
     this.paused = false
     this.assets = []
     this.camera = new Camera(0, 0, this.window.resolutionWidth, this.window.resolutionHeight)
+    this.mouse = this.scaleAndOffsetPoint(this.interaction.mouse.global)
+  }
+
+  scaleAndOffsetPoint(point) {
+    let transformedPoint = new PIXI.Point()
+    transformedPoint.x = point.x / this.window.renderTarget.scale.x
+    transformedPoint.y = point.y / this.window.renderTarget.scale.y
+    transformedPoint = this.camera.offsetMousePosition(transformedPoint)
+    return transformedPoint
   }
 
   initializeLoadingDisplay() {
@@ -59,6 +69,7 @@ export class Scene extends PIXI.Container {
 
   update() {
     this.camera.update(this)
+    this.mouse = this.scaleAndOffsetPoint(this.interaction.mouse.global)
   }
 
   pause() {
@@ -71,3 +82,4 @@ export class Scene extends PIXI.Container {
 }
 
 Scene.deltaTime = 0
+Scene.interaction = null

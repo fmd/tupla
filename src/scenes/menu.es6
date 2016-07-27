@@ -1,7 +1,7 @@
 import { Scene } from '../scene'
 
 export class MenuScene extends Scene {
-  constructor(window) {
-    super(window)
+  constructor(window, interaction) {
+    super(window, interaction)
   }
 }

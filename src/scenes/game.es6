@@ -1,12 +1,23 @@
 import PIXI from 'pixi.js'
 import { Scene } from '../scene'
 import { TileMap } from '../tile_map'
+import { Player } from '../player'
 import { flatten } from 'lodash'
 
 export class GameScene extends Scene {
-  constructor(window) {
-    super(window)
+  constructor(window, interaction) {
+    super(window, interaction)
     this.assets = flatten(['resources/maps/game.json'])
+    this.initializeInteractions()
+  }
+
+  initializeInteractions() {
+    this.interaction.onMouseDown = function(e) {
+      let p = new PIXI.Point(e.layerX, e.layerY)
+      this.player.moveTo(this.tileMap.pointAtWorldPoint(this.scaleAndOffsetPoint(p)))
+    }.bind(this)
+
+    this.interaction.addEvents()
   }
 
   update() {
@@ -15,19 +26,17 @@ export class GameScene extends Scene {
       return
     }
 
-    this.tileMap.position.x += 0.1
+    // console.log(this.tileMap.tilesAtMouse(this.mouse))
   }
 
   loadingDone(loader, resources) {
     super.loadingDone(loader, resources)
 
     this.tileMap = new TileMap(resources, 'resources/maps/game.json')
-    this.camera.lockArea(this.tileMap, new PIXI.Rectangle(0, 0, 32, 32))
-
-    this.tileMap2 = new TileMap(resources, 'resources/maps/game.json')
-    this.tileMap2.position.x += 10
+    this.player = new Player(this.tileMap, new PIXI.Point(1, 1))
+    this.camera.lockArea(this.player, new PIXI.Rectangle(0, 0, 16, 12))
 
     this.addChild(this.tileMap)
-    this.addChild(this.tileMap2)
+    this.addChild(this.player)
   }
 }

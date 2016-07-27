@@ -3,18 +3,27 @@ import PIXI from 'pixi.js'
 export class TileLayer {
   constructor(container, tileSize, palette, tiles) {
     this.container = container
+    this.tiles = tiles
     this.addRectangles(this.findRectangles(tiles), tileSize, palette)
   }
 
-  addRectangles(rects, tileSize, palette) {
-    let graphics = new PIXI.Graphics()
-    for (let k in rects) {
-      let rect = rects[k]
-      graphics.beginFill(this.toHex(palette[rect.tile.toString()].color))
-      graphics.drawRect(rect.x * tileSize, rect.y * tileSize, rect.width * tileSize, rect.height * tileSize)
+  tileAtPoint(point) {
+    if (point.x < 0 || point.x >= this.tiles[0].length || point.y < 0 || point.y >= this.tiles.length) {
+      return 0
     }
 
-    this.container.addChild(graphics)
+    return this.tiles[point.y][point.x]
+  }
+
+  addRectangles(rects, tileSize, palette) {
+    let graphic = new PIXI.Graphics()
+    for (let k in rects) {
+      let rect = rects[k]
+      graphic.beginFill(this.toHex(palette[rect.tile.toString()].color))
+      graphic.drawRect(rect.x * tileSize, rect.y * tileSize, rect.width * tileSize, rect.height * tileSize)
+    }
+
+    this.container.addChild(graphic)
   }
 
   findRectangles(srcTiles) {
@@ -47,8 +56,8 @@ export class TileLayer {
   }
 
   rectWidth(x, y, key, tiles) {
-    let width = 1
-    for (let t = x + 1; t < tiles[y].length; t++) {
+    let width = 0
+    for (let t = x; t < tiles[y].length; t++) {
       if (tiles[y][t] != key) {
         return width
       }

@@ -2,6 +2,9 @@
 
 WIP game
 
+#TODO
+Refactor point-to-world code
+
 ## Installation
 `npm install`
 
