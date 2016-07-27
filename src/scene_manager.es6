@@ -17,11 +17,11 @@ export class SceneManager {
   }
 
   loop(timestamp) {
+    requestAnimationFrame(this.loop.bind(this));
+
     if (this.lastTimestamp !== null) {
       Scene.deltaTime = timestamp - this.lastTimestamp
     }
-
-    requestAnimationFrame(this.loop.bind(this));
 
     if (!this.scene) {
       return

@@ -1,6 +1,6 @@
 import PIXI from 'pixi.js'
 import { TileLayer } from './tile_layer'
-import { map } from 'lodash'
+import { map, max } from 'lodash'
 
 export class TileMap extends PIXI.Container {
   constructor(resources, file) {
@@ -9,6 +9,14 @@ export class TileMap extends PIXI.Container {
     this.palette = resource.palette
     this.tileSize = resource.tileSize
     this.layers = map(resource.layers, this.createTileLayer.bind(this))
+  }
+
+  get tilesX() {
+    return max(map(this.layers, (layer) => { return layer.tiles[0].length }))
+  }
+
+  get tilesY() {
+    return max(map(this.layers, (layer) => { return layer.tiles.length }))
   }
 
   createTileLayer(layer) {

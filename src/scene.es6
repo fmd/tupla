@@ -10,10 +10,10 @@ export class Scene extends PIXI.Container {
     this.paused = false
     this.assets = []
     this.camera = new Camera(0, 0, this.window.resolutionWidth, this.window.resolutionHeight)
-    this.mouse = this.scaleAndOffsetPoint(this.interaction.mouse.global)
+    this.mouse = this.screenPointToWorld(this.interaction.mouse.global)
   }
 
-  scaleAndOffsetPoint(point) {
+  screenPointToWorld(point) {
     let transformedPoint = new PIXI.Point()
     transformedPoint.x = point.x / this.window.renderTarget.scale.x
     transformedPoint.y = point.y / this.window.renderTarget.scale.y
@@ -30,7 +30,7 @@ export class Scene extends PIXI.Container {
     PIXI.loader
       .add('resources/assets/fonts/little_league.fnt')
       .once('complete', function(loader, resources) {
-        this.loadingText = new PIXI.extras.BitmapText('Loading...', { font: '10pt Little-League' })
+        this.loadingText = new PIXI.extras.BitmapText('Loading...', { font: '5pt Little-League' })
         this.loadingText.position.x = this.window.resolutionWidth / 2 - this.loadingText.width / 2;
         this.loadingText.position.y = this.window.resolutionHeight / 2 - this.loadingText.height / 2;
 
@@ -69,7 +69,7 @@ export class Scene extends PIXI.Container {
 
   update() {
     this.camera.update(this)
-    this.mouse = this.scaleAndOffsetPoint(this.interaction.mouse.global)
+    this.mouse = this.screenPointToWorld(this.interaction.mouse.global)
   }
 
   pause() {

@@ -14,7 +14,7 @@ export class GameScene extends Scene {
   initializeInteractions() {
     this.interaction.onMouseDown = function(e) {
       let p = new PIXI.Point(e.layerX, e.layerY)
-      this.player.moveTo(this.tileMap.pointAtWorldPoint(this.scaleAndOffsetPoint(p)))
+      this.player.moveTo(this.tileMap.pointAtWorldPoint(this.screenPointToWorld(p)))
     }.bind(this)
 
     this.interaction.addEvents()
@@ -25,15 +25,13 @@ export class GameScene extends Scene {
     if (!this.loaded) {
       return
     }
-
-    // console.log(this.tileMap.tilesAtMouse(this.mouse))
   }
 
   loadingDone(loader, resources) {
     super.loadingDone(loader, resources)
 
     this.tileMap = new TileMap(resources, 'resources/maps/game.json')
-    this.player = new Player(this.tileMap, new PIXI.Point(1, 1))
+    this.player = new Player(this.tileMap, new PIXI.Point(2, 4))
     this.camera.lockArea(this.player, new PIXI.Rectangle(0, 0, 16, 12))
 
     this.addChild(this.tileMap)
