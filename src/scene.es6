@@ -40,15 +40,18 @@ export class Scene extends PIXI.Container {
 
   loadingDone(loader, resources) {
     this.loaded = true
-    this.loadingContainer.removeChild(this.loadingText)
-    this.removeChild(this.loadingContainer)
+
+    if (this.assets.length > 0) {
+      this.loadingContainer.removeChild(this.loadingText)
+      this.removeChild(this.loadingContainer)
+    }
   }
 
   load() {
     if (this.assets.length > 0) {
       this.initializeLoadingDisplay()
     } else {
-      this.loaded = true
+      this.loadingDone()
     }
   }
 
