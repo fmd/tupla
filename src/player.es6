@@ -1,5 +1,5 @@
 import PIXI from 'pixi.js'
-import { map, some, compact } from 'lodash'
+import { map, some, compact, filter } from 'lodash'
 
 export class Player extends PIXI.Container {
   constructor(tileMap, tile) {
@@ -65,28 +65,13 @@ export class Player extends PIXI.Container {
     let availableTiles = []
 
     availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y))
+    availableTiles.push(new PIXI.Point(this.tile.x - 1, this.tile.y))
+    availableTiles.push(new PIXI.Point(this.tile.x + 1, this.tile.y))
+    availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y - 1))
+    availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y + 1))
 
-    if (this.tile.x > 0) {
-      availableTiles.push(new PIXI.Point(this.tile.x - 1, this.tile.y))
-    }
-
-    if (this.tile.x < this.tileMap.tilesX - 1) {
-      availableTiles.push(new PIXI.Point(this.tile.x + 1, this.tile.y))
-    }
-
-    if (this.tile.y > 0) {
-      availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y - 1))
-    }
-
-    if (this.tile.y < this.tileMap.tilesY - 1) {
-      availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y + 1))
-    }
-
-    this.availableTiles = compact(map(availableTiles, (t) => {
-      if (this.tileMap.anyLayersCollide(t)) {
-        return null
-      }
-      return t
-    }))
+    this.availableTiles = filter(availableTiles, (t) => { return !this.tileMap.anyLayersHaveTagAt(t, 'collides') })
+    console.log('---')
+    console.log(this.availableTiles)
   }
 }

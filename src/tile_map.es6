@@ -19,8 +19,8 @@ export class TileMap extends PIXI.Container {
     return max(map(this.layers, (layer) => { return layer.tiles.length }))
   }
 
-  anyLayersCollide(point) {
-    let collisions = map(this.layers, (layer) => { return layer.tileCollides(point) })
+  anyLayersHaveTagAt(point, tag) {
+    let collisions = map(this.layers, (layer) => { return layer.hasTagAt(point, tag) })
     return some(collisions)
   }
 

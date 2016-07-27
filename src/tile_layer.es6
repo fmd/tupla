@@ -8,13 +8,22 @@ export class TileLayer {
     this.addRectangles(this.findRectangles(tiles), tileSize, palette)
   }
 
-  tileCollides(point) {
+  withinBounds(point) {
+    return (point.x >= 0 && point.x < this.tiles[0].length && point.y >= 0 && point.y < this.tiles.length)
+  }
+
+  hasTagAt(point, tag) {
+    if (!this.withinBounds(point)) {
+      return true
+    }
+
     let paletteKey = this.tiles[point.y][point.x].toString()
+
     if (!this.palette[paletteKey]) {
       return false
     }
 
-    if (!this.palette[paletteKey]['collides']) {
+    if (!this.palette[paletteKey][tag]) {
       return false
     }
 
@@ -22,7 +31,7 @@ export class TileLayer {
   }
 
   tileAtPoint(point) {
-    if (point.x < 0 || point.x >= this.tiles[0].length || point.y < 0 || point.y >= this.tiles.length) {
+    if (!this.withinBounds(point)) {
       return 0
     }
 
