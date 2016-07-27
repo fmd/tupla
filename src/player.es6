@@ -1,5 +1,5 @@
 import PIXI from 'pixi.js'
-import { map, some, compact, filter } from 'lodash'
+import { map, some, filter } from 'lodash'
 
 export class Player extends PIXI.Container {
   constructor(tileMap, tile) {
@@ -71,7 +71,5 @@ export class Player extends PIXI.Container {
     availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y + 1))
 
     this.availableTiles = filter(availableTiles, (t) => { return !this.tileMap.anyLayersHaveTagAt(t, 'collides') })
-    console.log('---')
-    console.log(this.availableTiles)
   }
 }
