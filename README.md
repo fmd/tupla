@@ -1,6 +1,6 @@
-# Dirt Nap
+# Tupla
 
-WIP detective game.
+WIP game
 
 ## Installation
 `npm install`
