@@ -4,6 +4,9 @@ WIP game
 
 #TODO
 Refactor point-to-world code
+Color class
+Prefix private methods with underscores
+Move jump logic to jump class
 
 ## Installation
 `npm install`
