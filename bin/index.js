@@ -52956,6 +52956,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.TileLayer = undefined;
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _pixi = require('pixi.js');
@@ -52971,77 +52973,103 @@ var TileLayer = exports.TileLayer = function () {
     _classCallCheck(this, TileLayer);
 
     this.container = container;
-    this.rectangles = this.findRectangles(tiles, tileSize, palette);
-    console.log(this.rectangles);
-    // this.graphics = new PIXI.Graphics()
-    // this.graphics.beginFill(parseInt('#e67e22'.replace(/^#/, ''), 16))
-    // this.graphics.drawRect(0, 0, 64, 64)
-    // this.container.addChild(this.graphics)
+    this.addRectangles(this.findRectangles(tiles), tileSize, palette);
   }
 
   _createClass(TileLayer, [{
-    key: 'findRectangles',
-    value: function findRectangles(rows, tileSize, palette) {
-      var rects = [];
-      var currentRect = null;
-
-      for (var rowKey in rows) {
-        rowKey = parseInt(rowKey);
-        var cols = rows[rowKey];
-        var rectRow = [];
-
-        for (var colKey in cols) {
-          colKey = parseInt(colKey);
-          var tile = cols[colKey];
-
-          if (currentRect == null) {
-            currentRect = { key: tile, x: colKey, y: rowKey, width: 1, height: 1 };
-          } else {
-            if (tile !== parseInt(currentRect.key)) {
-              rectRow.push(currentRect);
-              currentRect = { key: tile, x: colKey, y: rowKey, width: 1, height: 1 };
-            } else {
-              currentRect.width += 1;
-            }
-          }
-        }
-
-        rectRow.push(currentRect);
-        rects.push(rectRow);
-        currentRect = null;
+    key: 'addRectangles',
+    value: function addRectangles(rects, tileSize, palette) {
+      var graphics = new _pixi2.default.Graphics();
+      for (var k in rects) {
+        var rect = rects[k];
+        console.log(rect);
+        graphics.beginFill(this.toHex(palette[rect.tile.toString()].color));
+        graphics.drawRect(rect.x * tileSize, rect.y * tileSize, rect.width * tileSize, rect.height * tileSize);
       }
 
-      return this.mergeRects(rects);
+      this.container.addChild(graphics);
     }
   }, {
-    key: 'mergeRects',
-    value: function mergeRects(rects) {
-      for (var rowKey in rects) {
-        var rowKey = parseInt(rowKey);
-        var row = rects[rowKey];
-        for (var colKey in row) {
-          var colKey = parseInt(colKey);
-          var col = row[colKey];
+    key: 'findRectangles',
+    value: function findRectangles(srcTiles) {
+      var rects = [];
+      var tiles = this.cloneIntegerArray(srcTiles);
 
-          if (rowKey < rects.length) {
-            var findRow = rects[rowKey + 1];
-            for (var findKey in findRow) {
-              var findCol = findRow[findKey];
-              if (col.width == 3) {
-                console.log(col, findCol);
-              }
-              if (col.key == findCol.key && col.x == findCol.x && col.width == findCol.width) {
-                findCol.height += col.height;
-                row.splice(colKey, 1);
-                if (row.length == 0) {
-                  rects.splice(rowKey, 1);
-                }
-              }
-            }
+      for (var y = 0; y < tiles.length; y++) {
+        for (var x = 0; x < tiles[y].length; x++) {
+          var tile = tiles[y][x];
+          if (tile == 0) {
+            continue;
           }
+
+          var width = this.rectWidth(x, y, tile, tiles);
+          var height = this.rectHeight(x, y, tile, width, tiles);
+          this.zeroRectangle(x, y, width, height, tiles);
+          rects.push({ x: x, y: y, width: width, height: height, tile: tile });
         }
       }
+
       return rects;
+    }
+  }, {
+    key: 'zeroRectangle',
+    value: function zeroRectangle(x, y, width, height, tiles) {
+      for (var fy = y; fy < y + height; fy++) {
+        for (var fx = x; fx < x + width; fx++) {
+          tiles[fy][fx] = 0;
+        }
+      }
+    }
+  }, {
+    key: 'rectWidth',
+    value: function rectWidth(x, y, key, tiles) {
+      var width = 1;
+      for (var t = x + 1; t < tiles[y].length; t++) {
+        if (tiles[y][t] != key) {
+          return width;
+        }
+
+        width += 1;
+      }
+
+      return width;
+    }
+  }, {
+    key: 'rectHeight',
+    value: function rectHeight(x, y, key, width, tiles) {
+      var height = 1;
+      for (var t = y + 1; t < tiles.length; t++) {
+        if (this.rectWidth(x, t, key, tiles) != width) {
+          return height;
+        }
+
+        height += 1;
+      }
+
+      return height;
+    }
+  }, {
+    key: 'cloneIntegerArray',
+    value: function cloneIntegerArray(obj) {
+      var copy = void 0;
+
+      if (null == obj || "object" != (typeof obj === 'undefined' ? 'undefined' : _typeof(obj))) {
+        return obj;
+      }
+
+      if (obj instanceof Array) {
+        copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+          copy[i] = this.cloneIntegerArray(obj[i]);
+        }
+
+        return copy;
+      }
+    }
+  }, {
+    key: 'toHex',
+    value: function toHex(str) {
+      return parseInt(str.replace(/^#/, ''), 16);
     }
   }]);
 

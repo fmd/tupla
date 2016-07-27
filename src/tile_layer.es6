@@ -3,73 +3,94 @@ import PIXI from 'pixi.js'
 export class TileLayer {
   constructor(container, tileSize, palette, tiles) {
     this.container = container
-    this.rectangles = this.findRectangles(tiles, tileSize, palette)
-    console.log(this.rectangles)
-    // this.graphics = new PIXI.Graphics()
-    // this.graphics.beginFill(parseInt('#e67e22'.replace(/^#/, ''), 16))
-    // this.graphics.drawRect(0, 0, 64, 64)
-    // this.container.addChild(this.graphics)
+    this.addRectangles(this.findRectangles(tiles), tileSize, palette)
   }
 
-  findRectangles(rows, tileSize, palette) {
+  addRectangles(rects, tileSize, palette) {
+    let graphics = new PIXI.Graphics()
+    for (let k in rects) {
+      let rect = rects[k]
+      console.log(rect)
+      graphics.beginFill(this.toHex(palette[rect.tile.toString()].color))
+      graphics.drawRect(rect.x * tileSize, rect.y * tileSize, rect.width * tileSize, rect.height * tileSize)
+    }
+
+    this.container.addChild(graphics)
+  }
+
+  findRectangles(srcTiles) {
     let rects = []
-    let currentRect = null
+    let tiles = this.cloneIntegerArray(srcTiles)
 
-    for (let rowKey in rows) {
-      rowKey = parseInt(rowKey)
-      let cols = rows[rowKey]
-      let rectRow = []
-
-      for (let colKey in cols) {
-        colKey = parseInt(colKey)
-        let tile = cols[colKey]
-
-        if (currentRect == null) {
-          currentRect = { key: tile, x: colKey, y: rowKey, width: 1, height: 1 }
-        } else {
-          if (tile !== parseInt(currentRect.key)) {
-            rectRow.push(currentRect)
-            currentRect = { key: tile, x: colKey, y: rowKey, width: 1, height: 1 }
-          } else {
-            currentRect.width += 1
-          }
+    for (let y = 0; y < tiles.length; y++) {
+      for (let x = 0; x < tiles[y].length; x++) {
+        let tile = tiles[y][x]
+        if (tile == 0) {
+          continue
         }
-      }
 
-      rectRow.push(currentRect)
-      rects.push(rectRow)
-      currentRect = null
-    }
-
-    return this.mergeRects(rects)
-  }
-
-  mergeRects(rects) {
-  for (let rowKey in rects) {
-    let rowKey = parseInt(rowKey)
-    let row = rects[rowKey]
-    for (let colKey in row) {
-      let colKey = parseInt(colKey)
-      let col = row[colKey]
-
-      if (rowKey < rects.length) {
-        let findRow = rects[rowKey + 1]
-        for (let findKey in findRow) {
-          let findCol = findRow[findKey]
-          if (col.width == 3) {
-            console.log(col, findCol)
-          }
-          if (col.key == findCol.key && col.x == findCol.x && col.width == findCol.width) {
-            findCol.height += col.height
-            row.splice(colKey, 1)
-            if (row.length == 0) {
-              rects.splice(rowKey, 1)
-            }
-          }
-        }
+        let width = this.rectWidth(x, y, tile, tiles)
+        let height = this.rectHeight(x, y, tile, width, tiles)
+        this.zeroRectangle(x, y, width, height, tiles)
+        rects.push({ x, y, width, height, tile })
       }
     }
-  }
+
     return rects
+  }
+
+  zeroRectangle(x, y, width, height, tiles) {
+    for (let fy = y; fy < y + height; fy++) {
+      for (let fx = x; fx < x + width; fx++) {
+        tiles[fy][fx] = 0
+      }
+    }
+  }
+
+  rectWidth(x, y, key, tiles) {
+    let width = 1
+    for (let t = x + 1; t < tiles[y].length; t++) {
+      if (tiles[y][t] != key) {
+        return width
+      }
+
+      width += 1
+    }
+
+    return width
+  }
+
+  rectHeight(x, y, key, width, tiles) {
+    let height = 1
+    for (let t = y + 1; t < tiles.length; t++) {
+      if (this.rectWidth(x, t, key, tiles) != width) {
+        return height
+      }
+
+      height += 1
+    }
+
+    return height
+  }
+
+  cloneIntegerArray(obj) {
+    let copy
+
+    if (null == obj || "object" != typeof obj) {
+      return obj
+    }
+
+    if (obj instanceof Array) {
+      copy = []
+      for (let i = 0, len = obj.length; i < len; i++) {
+        copy[i] = this.cloneIntegerArray(obj[i])
+      }
+
+      return copy
+    }
+  }
+
+  toHex(str) {
+    return parseInt(str.replace(/^#/, ''), 16)
   }
 }
