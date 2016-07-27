@@ -3,6 +3,7 @@
 WIP game
 
 #TODO
+Fix jumping in one-space high tube and not being able to move
 Fix camera jumping (jump straight up to see what i mean)
 Move jump logic to jump class
 Refactor point-to-world code
