@@ -10,7 +10,6 @@ export class TileLayer {
     let graphics = new PIXI.Graphics()
     for (let k in rects) {
       let rect = rects[k]
-      console.log(rect)
       graphics.beginFill(this.toHex(palette[rect.tile.toString()].color))
       graphics.drawRect(rect.x * tileSize, rect.y * tileSize, rect.width * tileSize, rect.height * tileSize)
     }

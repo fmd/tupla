@@ -1,5 +1,6 @@
 import PIXI from 'pixi.js'
 import { AssetLoader } from './asset_loader'
+import { Camera } from './camera'
 
 export class Scene extends PIXI.Container {
   constructor(window) {
@@ -7,6 +8,7 @@ export class Scene extends PIXI.Container {
     this.window = window
     this.paused = false
     this.assets = []
+    this.camera = new Camera(0, 0, this.window.resolutionWidth, this.window.resolutionHeight)
   }
 
   initializeLoadingDisplay() {
@@ -56,7 +58,7 @@ export class Scene extends PIXI.Container {
   }
 
   update() {
-
+    this.camera.update(this)
   }
 
   pause() {
@@ -67,3 +69,5 @@ export class Scene extends PIXI.Container {
     this.paused = false
   }
 }
+
+Scene.deltaTime = 0

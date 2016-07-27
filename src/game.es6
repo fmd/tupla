@@ -30,7 +30,7 @@ export class Game {
   }
 
   static get defaultOpts() {
-    return { resolution: { width: 240, height: 120 },
+    return { resolution: { width: 64, height: 64 },
              scaleMode: PIXI.SCALE_MODES.NEAREST,
              backgroundColor: 0x232323 }
   }
