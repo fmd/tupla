@@ -31,7 +31,7 @@ export class GameScene extends Scene {
     super.loadingDone(loader, resources)
 
     this.tileMap = new TileMap(resources, 'resources/maps/game.json')
-    this.player = new Player(this.tileMap, new PIXI.Point(2, 4))
+    this.player = new Player(this.tileMap, new PIXI.Point(2, 2))
     this.camera.lockArea(this.player, new PIXI.Rectangle(0, 0, 16, 12))
 
     this.addChild(this.tileMap)

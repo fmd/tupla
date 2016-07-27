@@ -1,5 +1,5 @@
 import PIXI from 'pixi.js'
-import { map, some } from 'lodash'
+import { map, some, compact } from 'lodash'
 
 export class Player extends PIXI.Container {
   constructor(tileMap, tile) {
@@ -8,6 +8,7 @@ export class Player extends PIXI.Container {
     this.availableTileGraphics = []
     this.drawPlayer()
     this.tile = tile
+    this.calculateAvailableTiles()
     this.moveTo(tile)
   }
 
@@ -16,30 +17,6 @@ export class Player extends PIXI.Container {
     graphic.beginFill(this.toHex('#27ae60'))
     graphic.drawRect(0, 0, this.tileMap.tileSize, this.tileMap.tileSize)
     this.addChild(graphic)
-  }
-
-  get availableTiles() {
-    let availableTiles = []
-
-    availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y))
-
-    if (this.tile.x > 0) {
-      availableTiles.push(new PIXI.Point(this.tile.x - 1, this.tile.y))
-    }
-
-    if (this.tile.x < this.tileMap.tilesX - 1) {
-      availableTiles.push(new PIXI.Point(this.tile.x + 1, this.tile.y))
-    }
-
-    if (this.tile.y > 0) {
-      availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y - 1))
-    }
-
-    if (this.tile.y < this.tileMap.tilesY - 1) {
-      availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y + 1))
-    }
-
-    return availableTiles
   }
 
   drawAvailableTiles() {
@@ -80,6 +57,36 @@ export class Player extends PIXI.Container {
     this.position.y = tile.y * this.tileMap.tileSize
 
     this.tile = tile
+    this.calculateAvailableTiles()
     this.drawAvailableTiles()
+  }
+
+  calculateAvailableTiles() {
+    let availableTiles = []
+
+    availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y))
+
+    if (this.tile.x > 0) {
+      availableTiles.push(new PIXI.Point(this.tile.x - 1, this.tile.y))
+    }
+
+    if (this.tile.x < this.tileMap.tilesX - 1) {
+      availableTiles.push(new PIXI.Point(this.tile.x + 1, this.tile.y))
+    }
+
+    if (this.tile.y > 0) {
+      availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y - 1))
+    }
+
+    if (this.tile.y < this.tileMap.tilesY - 1) {
+      availableTiles.push(new PIXI.Point(this.tile.x, this.tile.y + 1))
+    }
+
+    this.availableTiles = compact(map(availableTiles, (t) => {
+      if (this.tileMap.anyLayersCollide(t)) {
+        return null
+      }
+      return t
+    }))
   }
 }

@@ -4,7 +4,21 @@ export class TileLayer {
   constructor(container, tileSize, palette, tiles) {
     this.container = container
     this.tiles = tiles
+    this.palette = palette
     this.addRectangles(this.findRectangles(tiles), tileSize, palette)
+  }
+
+  tileCollides(point) {
+    let paletteKey = this.tiles[point.y][point.x].toString()
+    if (!this.palette[paletteKey]) {
+      return false
+    }
+
+    if (!this.palette[paletteKey]['collides']) {
+      return false
+    }
+
+    return true
   }
 
   tileAtPoint(point) {
