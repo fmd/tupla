@@ -1,5 +1,5 @@
 import PIXI from 'pixi.js'
-import { map, includes, cloneDeep, reduce, flatten, slice, findIndex, range } from 'lodash'
+import { map, includes, cloneDeep, reduce, slice, findIndex, range, flatMap, compact } from 'lodash'
 import { Color } from './color'
 import { TileRenderer } from './tile_renderer'
 
@@ -36,7 +36,9 @@ export class TileLayer extends PIXI.Container {
 
   _findRectangles(srcTiles) {
     let tiles = cloneDeep(srcTiles)
-    return map(range(tiles.length), (y) => map(range(tiles[y].length), (x) => this._findRectangle(tiles, x, y)))
+    let rects = compact(flatMap(range(tiles.length), (y) => map(range(tiles[y].length), (x) => this._findRectangle(tiles, x, y))))
+    console.log(rects)
+    return rects
   }
 
   _findRectangle(tiles, x, y) {
@@ -47,7 +49,7 @@ export class TileLayer extends PIXI.Container {
     const height = this._rectHeight(tiles, x, y, width, tile)
 
     this._zeroRectangle(tiles, x, y, width, height)
-    rects.push({ x, y, width, height, tileValue: tile })
+    return { x, y, width, height, tileValue: tile }
   }
 
   _zeroRectangle(tiles, x, y, width, height) {
