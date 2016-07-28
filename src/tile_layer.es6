@@ -35,29 +35,23 @@ export class TileLayer extends PIXI.Container {
   }
 
   _findRectangles(srcTiles) {
-    let rects = []
     let tiles = cloneDeep(srcTiles)
+    return map(range(tiles.length), (y) => map(range(tiles[y].length), (x) => this._findRectangle(tiles, x, y)))
+  }
 
-    for (let y = 0; y < tiles.length; y++) {
-      for (let x = 0; x < tiles[y].length; x++) {
-        const tile = tiles[y][x]
-        if (tile == 0) continue
-        const width = this._rectWidth(tiles, x, y, tile)
-        const height = this._rectHeight(tiles, x, y, width, tile)
-        this._zeroRectangle(tiles, x, y, width, height)
-        rects.push({ x, y, width, height, tileValue: tile })
-      }
-    }
+  _findRectangle(tiles, x, y) {
+    const tile = tiles[y][x]
+    if (tile == 0) return
 
-    return rects
+    const width = this._rectWidth(tiles, x, y, tile)
+    const height = this._rectHeight(tiles, x, y, width, tile)
+
+    this._zeroRectangle(tiles, x, y, width, height)
+    rects.push({ x, y, width, height, tileValue: tile })
   }
 
   _zeroRectangle(tiles, x, y, width, height) {
-    for (let fy = y; fy < y + height; fy++) {
-      for (let fx = x; fx < x + width; fx++) {
-        tiles[fy][fx] = 0
-      }
-    }
+    map(range(y, y + height), (j) => map(range(x, x + width), (i) => tiles[j][i] = 0))
   }
 
   _rectWidth(tiles, x, y, tileValue) {
