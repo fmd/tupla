@@ -3,11 +3,11 @@
 WIP game
 
 #TODO
-Fix jumping in one-space high tube and not being able to move
+Refactor player movement
 Fix camera jumping (jump straight up to see what i mean)
-Move jump logic to jump class
+Refactor methods in tile map and tile layer
 Refactor point-to-world code
-Color class
+Change all filenames to dashes
 Prefix private methods with underscores
 
 ## Installation

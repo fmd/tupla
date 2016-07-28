@@ -1,76 +1,58 @@
 import PIXI from 'pixi.js'
+import { map, includes, cloneDeep, reduce, flatten, slice, findIndex, range } from 'lodash'
+import { Color } from './color'
+import { TileRenderer } from './tile_renderer'
 
-export class TileLayer {
-  constructor(container, tileSize, palette, tiles) {
-    this.container = container
-    this.tiles = tiles
-    this.palette = palette
-    this.addRectangles(this.findRectangles(tiles), tileSize, palette)
+export class TileLayer extends PIXI.Container {
+
+  // Public
+  constructor(tileMap, tiles) {
+    super()
+    this._drawTiles(tileMap, tiles)
+    tileMap.addChild(this)
   }
 
-  withinBounds(point) {
-    return (point.x >= 0 && point.x < this.tiles[0].length && point.y >= 0 && point.y < this.tiles.length)
+  tagsAt(point) {
+    if (!this._withinBoundsAt(point)) return []
+    const paletteKey = this.tiles[point.y][point.x].toString()
+    return this.palette[paletteKey] && this.palette[paletteKey]['tags'] || []
   }
 
   hasTagAt(point, tag) {
-    if (!this.withinBounds(point)) {
-      return true
-    }
-
-    let paletteKey = this.tiles[point.y][point.x].toString()
-
-    if (!this.palette[paletteKey]) {
-      return false
-    }
-
-    if (!this.palette[paletteKey][tag]) {
-      return false
-    }
-
-    return true
+    return includes(this.tagsAt(point), tag)
   }
 
-  tileAtPoint(point) {
-    if (!this.withinBounds(point)) {
-      return 0
-    }
-
-    return this.tiles[point.y][point.x]
+  // Private
+  _drawTiles(tileMap, tiles) {
+    map(this._findRectangles(tiles), (rect) => {
+      const color = tileMap.palette[rect.tileValue.toString()].color
+      this.addChild(TileRenderer.drawColor(tileMap.tileSize, rect, color))
+    })
   }
 
-  addRectangles(rects, tileSize, palette) {
-    let graphic = new PIXI.Graphics()
-    for (let k in rects) {
-      let rect = rects[k]
-      graphic.beginFill(this.toHex(palette[rect.tile.toString()].color))
-      graphic.drawRect(rect.x * tileSize, rect.y * tileSize, rect.width * tileSize, rect.height * tileSize)
-    }
-
-    this.container.addChild(graphic)
+  _withinBoundsAt(point) {
+    return (point.x >= 0 && point.x < this.tiles[0].length && point.y >= 0 && point.y < this.tiles.length)
   }
 
-  findRectangles(srcTiles) {
+  _findRectangles(srcTiles) {
     let rects = []
-    let tiles = this.cloneIntegerArray(srcTiles)
+    let tiles = cloneDeep(srcTiles)
 
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        let tile = tiles[y][x]
-        if (tile == 0) {
-          continue
-        }
-
-        let width = this.rectWidth(x, y, tile, tiles)
-        let height = this.rectHeight(x, y, tile, width, tiles)
-        this.zeroRectangle(x, y, width, height, tiles)
-        rects.push({ x, y, width, height, tile })
+        const tile = tiles[y][x]
+        if (tile == 0) continue
+        const width = this._rectWidth(tiles, x, y, tile)
+        const height = this._rectHeight(tiles, x, y, width, tile)
+        this._zeroRectangle(tiles, x, y, width, height)
+        rects.push({ x, y, width, height, tileValue: tile })
       }
     }
 
     return rects
   }
 
-  zeroRectangle(x, y, width, height, tiles) {
+  _zeroRectangle(tiles, x, y, width, height) {
     for (let fy = y; fy < y + height; fy++) {
       for (let fx = x; fx < x + width; fx++) {
         tiles[fy][fx] = 0
@@ -78,50 +60,14 @@ export class TileLayer {
     }
   }
 
-  rectWidth(x, y, key, tiles) {
-    let width = 0
-    for (let t = x; t < tiles[y].length; t++) {
-      if (tiles[y][t] != key) {
-        return width
-      }
-
-      width += 1
-    }
-
-    return width
+  _rectWidth(tiles, x, y, tileValue) {
+    const row = tiles[y]
+    const end = findIndex(row, (t) => t != tileValue, x)
+    return slice(row, x, end > 0 ? end : row.length).length
   }
 
-  rectHeight(x, y, key, width, tiles) {
-    let height = 1
-    for (let t = y + 1; t < tiles.length; t++) {
-      if (this.rectWidth(x, t, key, tiles) != width) {
-        return height
-      }
-
-      height += 1
-    }
-
-    return height
-  }
-
-  cloneIntegerArray(obj) {
-    let copy
-
-    if (null == obj || "object" != typeof obj) {
-      return obj
-    }
-
-    if (obj instanceof Array) {
-      copy = []
-      for (let i = 0, len = obj.length; i < len; i++) {
-        copy[i] = this.cloneIntegerArray(obj[i])
-      }
-
-      return copy
-    }
-  }
-
-  toHex(str) {
-    return parseInt(str.replace(/^#/, ''), 16)
+  _rectHeight(tiles, x, y, width, tileValue) {
+    const end = findIndex(range(tiles.length), (i) => width != this._rectWidth(tiles, x, i, tileValue), y)
+    return slice(tiles, y, end > 0 ? end : tiles.length).length
   }
 }
