@@ -10,7 +10,10 @@ export class Scene extends PIXI.Container {
     this.paused = false
     this.assets = []
     this.camera = new Camera(0, 0, this.window.resolutionWidth, this.window.resolutionHeight)
-    this.mouse = this.screenPointToWorld(this.interaction.mouse.global)
+  }
+
+  get mouse() {
+    return this.screenPointToWorld(this.interaction.mouse.global)
   }
 
   screenPointToWorld(point) {
@@ -68,8 +71,7 @@ export class Scene extends PIXI.Container {
   }
 
   update() {
-    this.camera.update(this)
-    this.mouse = this.screenPointToWorld(this.interaction.mouse.global)
+    
   }
 
   pause() {

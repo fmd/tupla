@@ -3,10 +3,8 @@
 WIP game
 
 #TODO
-Refactor player movement
-Fix camera jumping (jump straight up to see what i mean)
-Refactor methods in tile map and tile layer
-Refactor point-to-world code
+
+Add AI
 Change all filenames to dashes
 Prefix private methods with underscores
 

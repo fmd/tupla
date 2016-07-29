@@ -11,14 +11,6 @@ export class TileMap extends PIXI.Container {
     this.layers = map(resource.layers, (layer) => new TileLayer(this, layer.tiles))
   }
 
-  get tilesX() {
-    return max(map(this.layers, (layer) => layer.tiles[0].length))
-  }
-
-  get tilesY() {
-    return max(map(this.layers, (layer) => layer.tiles.length))
-  }
-
   hasTagAt(point, tag) {
     const collisions = map(this.layers, (layer) => layer.hasTagAt(point, tag))
     return some(collisions)
@@ -32,6 +24,6 @@ export class TileMap extends PIXI.Container {
   tilePointAt(point) {
     const x = (point.x - this.position.x) / this.tileSize
     const y = (point.y - this.position.y) / this.tileSize
-    return new PIXI.Point(Math.floor(x), Math.floor(y))
+    return new PIXI.Point(Math.round(x), Math.round(y))
   }
 }

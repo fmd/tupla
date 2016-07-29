@@ -8,14 +8,16 @@ export class TileLayer extends PIXI.Container {
   // Public
   constructor(tileMap, tiles) {
     super()
-    this._drawTiles(tileMap, tiles)
-    tileMap.addChild(this)
+    this.tiles = tiles
+    this.tileMap = tileMap
+    this._drawTiles()
+    this.tileMap.addChild(this)
   }
 
   tagsAt(point) {
     if (!this._withinBoundsAt(point)) return []
     const paletteKey = this.tiles[point.y][point.x].toString()
-    return this.palette[paletteKey] && this.palette[paletteKey]['tags'] || []
+    return this.tileMap.palette[paletteKey] && this.tileMap.palette[paletteKey]['tags'] || []
   }
 
   hasTagAt(point, tag) {
@@ -23,10 +25,10 @@ export class TileLayer extends PIXI.Container {
   }
 
   // Private
-  _drawTiles(tileMap, tiles) {
-    map(this._findRectangles(tiles), (rect) => {
-      const color = tileMap.palette[rect.tileValue.toString()].color
-      this.addChild(TileRenderer.drawColor(tileMap.tileSize, rect, color))
+  _drawTiles() {
+    map(this._findRectangles(), (rect) => {
+      const color = this.tileMap.palette[rect.tileValue.toString()].color
+      this.addChild(TileRenderer.drawColor(this.tileMap.tileSize, rect, color))
     })
   }
 
@@ -34,10 +36,9 @@ export class TileLayer extends PIXI.Container {
     return (point.x >= 0 && point.x < this.tiles[0].length && point.y >= 0 && point.y < this.tiles.length)
   }
 
-  _findRectangles(srcTiles) {
-    let tiles = cloneDeep(srcTiles)
+  _findRectangles() {
+    let tiles = cloneDeep(this.tiles)
     let rects = compact(flatMap(range(tiles.length), (y) => map(range(tiles[y].length), (x) => this._findRectangle(tiles, x, y))))
-    console.log(rects)
     return rects
   }
 
