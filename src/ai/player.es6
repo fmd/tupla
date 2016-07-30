@@ -19,7 +19,14 @@ export class PlayerAI extends AI {
 
   beforeUpdate(nextTurn) {
     super.beforeUpdate(nextTurn)
+    this.actor.actionState.updateState(nextTurn, this._determineState())
+  }
 
+  afterUpdate(currentTurn) {
+    super.afterUpdate(currentTurn)
+  }
+
+  _determineState() {
     const gravity = 1.0
     const friction = 1.0
     const maxAcceleration = 1.0
@@ -27,11 +34,7 @@ export class PlayerAI extends AI {
     const acceleration = this.clampPoint(this._applyFriction(this._applyGravity(this.currentState.acceleration, gravity), friction), 0, maxAcceleration)
     const velocity = this.clampPoint(this.addPoints(this.currentState.velocity, acceleration), 0, maxVelocity)
     const point = this._reduceToAvailable(this.addPoints(this.position, velocity))
-    this.actor.actionState.updateState(nextTurn, { point, velocity, acceleration })
-  }
-
-  afterUpdate(currentTurn) {
-    super.afterUpdate(currentTurn)
+    return { point, velocity, acceleration }
   }
 
   _reduceToAvailable(point) {
