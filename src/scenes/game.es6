@@ -13,14 +13,14 @@ export class GameScene extends Scene {
     this.initializeInteractions()
 
     this.actors = []
-    this.turnTicker = new TurnTicker(250)
+    this.turnTicker = new TurnTicker(1000)
   }
 
   initializeInteractions() {
     this.interaction.onMouseDown = function(e) {
       let p = Vec2.create(e.layerX, e.layerY)
       let t = this.tileMap.tilePointAt(this.screenPointToWorld(p))
-      this.player.requestMove(Vec2.create(t.x - this.player.position.x, t.y - this.player.position.y))
+      this.player.requestMove(Vec2.create(t.x, t.y))
     }.bind(this)
 
     this.interaction.addEvents()

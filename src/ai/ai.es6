@@ -16,21 +16,17 @@ export class AI {
 
   }
 
-  get state() {
-    return this.actor.state
-  }
-
-  get position() {
-    return this.state.position
-  }
-
   get directions() {
-    const p = this.position
+    const p = this.actor.position
     return { center: p,
-             up:     Vec2.create(p.x, p.y - 1),
-             down:   Vec2.create(p.x, p.y + 1),
-             left:   Vec2.create(p.x - 1, p.y),
-             right:  Vec2.create(p.x + 1, p.y) }
+             up:        Vec2.create(p.x, p.y - 1),
+             upRight:   Vec2.create(p.x + 1, p.y - 1),
+             upLeft:    Vec2.create(p.x - 1, p.y - 1),
+             down:      Vec2.create(p.x, p.y + 1),
+             downRight: Vec2.create(p.x + 1, p.y + 1),
+             downLeft:  Vec2.create(p.x - 1, p.y + 1),
+             left:      Vec2.create(p.x - 1, p.y),
+             right:     Vec2.create(p.x + 1, p.y) }
   }
 
   hasTagAt(direction, tag) {

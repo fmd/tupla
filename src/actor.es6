@@ -31,6 +31,14 @@ export class Actor {
     return this.actionState.current
   }
 
+  get acceleration() {
+    return this.state.acceleration
+  }
+
+  get velocity() {
+    return this.state.velocity
+  }
+
   get position() {
     return this.state.position
   }

@@ -51,7 +51,7 @@ export class PlayerAI extends AI {
 
     Vec2.clamp(velocity, -maxVelocity, maxVelocity)
 
-    const position = this._injectedPosition() || this._defaultPosition(velocity) || this.position.clone()
+    const position = this._injectedPosition() || this._defaultPosition(velocity) || this.actor.position.clone()
     this.injectedVelocity = Vec2.create()
 
     return { position, velocity, acceleration }
@@ -59,12 +59,12 @@ export class PlayerAI extends AI {
 
   _injectedPosition() {
     if (this.injectedVelocity.equals(Vec2.create())) return null
-    const position = filter(this.availableMoves, (p) => p.equals(this.position.clone().add(this.injectedVelocity)))[0]
+    const position = filter(this.availableMoves, (p) => p.equals(this.actor.position.clone().add(this.injectedVelocity)))[0]
     return position
   }
 
   _defaultPosition(velocity) {
-    return filter(this.availableMoves, (p) => p.equals(this.position.clone().add(velocity)))[0]
+    return filter(this.availableMoves, (p) => p.equals(this.actor.position.clone().add(velocity)))[0]
   }
 
   _groundVelocity(velocity) {

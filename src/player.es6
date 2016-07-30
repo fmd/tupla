@@ -1,6 +1,6 @@
 import PIXI from 'pixi.js'
 import { Vec2 } from './vec2'
-import { map, values, filter } from 'lodash'
+import { map, values, filter, some } from 'lodash'
 import { Color } from './color'
 import { Actor } from './actor'
 import { TileRenderer } from './tile_renderer'
@@ -16,8 +16,9 @@ export class Player extends Actor {
     this._drawSuggestionTiles()
   }
 
-  requestMove(point) {
-    this.ai.injectVelocity(point)
+  requestMove(position) {
+    this.ai.injectVelocity(position.clone().subtract(this.position))
+    this._drawSelectedTile(position)
   }
 
   _addToScene(scene) {
@@ -43,9 +44,28 @@ export class Player extends Actor {
     this.addChild(this.suggestionsContainer)
   }
 
+  _drawVelocityTile() {
+    if (this.velocityTile) this.suggestionsContainer.removeChild(this.velocityTile)
+    const inAvailableTiles = some(values(this.ai.availableMoves), (p) => p.equals(this.velocity.clone().add(this.position)))
+    if (!inAvailableTiles) return
+    const rect = { x: this.velocity.x, y: this.velocity.y, width: 1, height: 1 }
+    this.velocityTile = TileRenderer.drawColor(this.tileMap.tileSize, rect, '#ffffff', 0.3)
+    this.suggestionsContainer.addChild(this.velocityTile)
+  }
+
+  _drawSelectedTile(position) {
+    if (this.selectedTile) this.suggestionsContainer.removeChild(this.selectedTile)
+    const inAvailableTiles = some(values(this.ai.availableMoves), (p) => p.equals(position))
+    if (!inAvailableTiles) return
+    const placePosition = position.clone().subtract(this.position)
+    const rect = { x: placePosition.x, y: placePosition.y, width: 1, height: 1 }
+    this.selectedTile = TileRenderer.drawColor(this.tileMap.tileSize, rect, '#27ae60', 0.3)
+    this.suggestionsContainer.addChild(this.selectedTile)
+  }
+
   _drawSuggestionTile(position) {
     const rect = { x: position.x - this.position.x, y: position.y - this.position.y, width: 1, height: 1 }
-    const tile = TileRenderer.drawColor(this.tileMap.tileSize, rect, '#ffffff', 0.5)
+    const tile = TileRenderer.drawColor(this.tileMap.tileSize, rect, '#ffffff', 0.3)
     this.suggestionsContainer.addChild(tile)
   }
 
@@ -54,5 +74,6 @@ export class Player extends Actor {
   afterUpdate() {
     this.updateCamera()
     this._drawSuggestionTiles()
+    this._drawVelocityTile()
   }
 }
