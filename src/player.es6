@@ -8,7 +8,7 @@ import { PlayerAI } from './ai/player'
 
 export class Player extends Actor {
   constructor(scene, tileMap, point) {
-    super(tileMap, { point })
+    super(tileMap, { point, acceleration: new PIXI.Point(0,0), velocity: new PIXI.Point(0,0) })
     this.ai = new PlayerAI(tileMap, this)
     this.addToScene(scene)
     this.addChild(TileRenderer.drawColor(tileMap.tileSize, { x: 0, y: 0, width: 1, height: 1 }, '#27ae60'))
@@ -24,9 +24,7 @@ export class Player extends Actor {
     }.bind(scene)
   }
 
-  beforeUpdate() {
-
-  }
+  beforeUpdate() {}
 
   afterUpdate() {
     this.updateCamera()

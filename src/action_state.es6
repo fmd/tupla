@@ -19,11 +19,11 @@ export class ActionState {
     return this.stateHistory[turn - this.initialTurn] || this.stateHistory[this.stateHistory.length - 1]
   }
 
-  get currentState() {
+  get current() {
     return this.stateHistory[TurnTicker.currentTurn - this.initialTurn] || this.stateHistory[this.stateHistory.length - 1]
   }
 
-  get lastState() {
+  get last() {
     const index = clamp(TurnTicker.currentTurn - this.initialTurn - 1, 0, this.stateHistory.length - 1)
     return this.stateHistory[index]
   }
