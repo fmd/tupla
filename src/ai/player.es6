@@ -1,5 +1,5 @@
 import { AI } from './ai'
-import { reduce, filter } from 'lodash'
+import { reduce, filter, concat } from 'lodash'
 
 export class PlayerAI extends AI {
   constructor(tileMap, actor) {
@@ -26,7 +26,7 @@ export class PlayerAI extends AI {
     const maxVelocity = 1.0
     const acceleration = this.clampPoint(this._applyFriction(this._applyGravity(this.currentState.acceleration, gravity), friction), 0, maxAcceleration)
     const velocity = this.clampPoint(this.addPoints(this.currentState.velocity, acceleration), 0, maxVelocity)
-    const point = this._reduceToAvailable(this.addPoints(this.currentState.point, velocity))
+    const point = this._reduceToAvailable(this.addPoints(this.position, velocity))
     this.actor.actionState.updateState(nextTurn, { point, velocity, acceleration })
   }
 
@@ -35,9 +35,7 @@ export class PlayerAI extends AI {
   }
 
   _reduceToAvailable(point) {
-    let moves = filter(this.availableMoves, (p) => point.x == p.x && point.y == p.y)
-    if (moves.length == 0) moves = [this.currentState.point]
-    return moves[0]
+    return concat(filter(this.availableMoves, (p) => point.x == p.x && point.y == p.y), this.position)[0]
   }
 
   _applyGravity(acceleration, gravity) {
