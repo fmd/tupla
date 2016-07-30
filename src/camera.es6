@@ -23,13 +23,18 @@ export class Camera extends PIXI.Point {
     scene.position.y = -this.y
   }
 
-  lockOn(target) {
+  lockOn(target, fixedWidth, fixedHeight) {
     this.target = target
+    this.targetWidth = fixedWidth || this.target.width
+    this.targetHeight = fixedHeight || this.target.height
     this.lockMethod = this._lockOn.bind(this)
   }
 
-  lockArea(target, rect) {
+  lockArea(target, rect, fixedWidth, fixedHeight) {
     this.target = target
+    this.targetWidth = fixedWidth || this.target.width
+    this.targetHeight = fixedHeight || this.target.height
+
     this.lockRect = rect
 
     this._lockOn()
@@ -42,16 +47,16 @@ export class Camera extends PIXI.Point {
   }
 
   get lockX() {
-    return this.target.position.x - (this.screenWidth - this.target.width) / 2
+    return this.target.position.x - (this.screenWidth - this.targetWidth) / 2
   }
 
   get lockY() {
-    return this.target.position.y - (this.screenHeight - this.target.height) / 2
+    return this.target.position.y - (this.screenHeight - this.targetHeight) / 2
   }
 
   _lockArea() {
-    let targetX = (this.target.x + this.target.width / 2)
-    let targetY = (this.target.y + this.target.height / 2)
+    let targetX = (this.target.x + this.targetWidth / 2)
+    let targetY = (this.target.y + this.targetHeight / 2)
 
     let rectWidth = this.lockRect.width
     let rectHeight = this.lockRect.height

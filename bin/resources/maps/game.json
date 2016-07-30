@@ -1,5 +1,5 @@
 {
-  "tileSize": 2,
+  "tileSize": 3,
   "palette": {
     "1": { "color": "#e67e22", "tags": ["collides"] },
     "2": { "color": "#d35400", "tags": ["collides"] },

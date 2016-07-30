@@ -22,8 +22,16 @@ export class Actor {
     this.container.addChild(child)
   }
 
+  removeChild(child) {
+    this.container.removeChild(child)
+  }
+
   get state() {
     return this.actionState.current
+  }
+
+  get position() {
+    return this.state.position
   }
 
   beforeUpdate(nextTurn) {}
