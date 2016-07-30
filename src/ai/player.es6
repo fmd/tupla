@@ -11,7 +11,7 @@ export class PlayerAI extends AI {
   }
 
   get availableMoves() {
-    return reduce(this.actor.directions,(moves, point, direction) => {
+    return reduce(this.directions,(moves, point, direction) => {
       if (!this.hasTagAt(direction, 'collides')) moves[direction] = point
       return moves
     }, {})
@@ -33,8 +33,8 @@ export class PlayerAI extends AI {
     const maxVelocity = 1.0
     const acceleration = this.clampPoint(this._applyFriction(this._applyGravity(this.currentState.acceleration, gravity), friction), 0, maxAcceleration)
     const velocity = this.clampPoint(this.addPoints(this.currentState.velocity, acceleration), 0, maxVelocity)
-    const point = this._reduceToAvailable(this.addPoints(this.position, velocity))
-    return { point, velocity, acceleration }
+    const position = this._reduceToAvailable(this.addPoints(this.position, velocity))
+    return { position, velocity, acceleration }
   }
 
   _reduceToAvailable(point) {

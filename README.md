@@ -4,9 +4,12 @@ WIP game
 
 #TODO
 
-Add AI
-Change all filenames to dashes
-Prefix private methods with underscores
+- Add AI
+- Add smart actor collision detection
+- Render tile layers to textures
+- Change all filenames to dashes
+- Prefix private members with underscores
+- Prefix private methods with underscores
 
 ## Installation
 `npm install`

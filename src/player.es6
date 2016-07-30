@@ -7,8 +7,8 @@ import { TurnTicker } from './turn_ticker'
 import { PlayerAI } from './ai/player'
 
 export class Player extends Actor {
-  constructor(scene, tileMap, point) {
-    super(tileMap, { point, acceleration: new PIXI.Point(0,0), velocity: new PIXI.Point(0,0) })
+  constructor(scene, tileMap, position) {
+    super(tileMap, { position, acceleration: new PIXI.Point(0,0), velocity: new PIXI.Point(0,0) })
     this.ai = new PlayerAI(tileMap, this)
     this.addToScene(scene)
     this.addChild(TileRenderer.drawColor(tileMap.tileSize, { x: 0, y: 0, width: 1, height: 1 }, '#27ae60'))

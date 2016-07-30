@@ -4,7 +4,7 @@ import { ActionState } from './action_state'
 
 export class Actor {
   constructor(tileMap, initialState) {
-    initialState = initialState || { point: new PIXI.Point(0, 0),
+    initialState = initialState || { position: new PIXI.Point(0, 0),
                                      velocity: new PIXI.Point(0, 0),
                                      acceleration: new PIXI.Point(0, 0) }
 
@@ -18,21 +18,12 @@ export class Actor {
     this.container = new PIXI.Container()
   }
 
-  get position() {
-    return this.actionState.current.point
-  }
-
-  get directions() {
-    const p = this.position
-    return { center: p,
-             up:     new PIXI.Point(p.x, p.y - 1),
-             down:   new PIXI.Point(p.x, p.y + 1),
-             left:   new PIXI.Point(p.x - 1, p.y),
-             right:  new PIXI.Point(p.x + 1, p.y) }
-  }
-
   addChild(child) {
     this.container.addChild(child)
+  }
+
+  get state() {
+    return this.actionState.current
   }
 
   beforeUpdate(nextTurn) {}
@@ -45,8 +36,8 @@ export class Actor {
   }
 
   afterUpdateTurn(currentTurn) {
-    this.container.position.x = this.position.x * this.tileMap.tileSize
-    this.container.position.y = this.position.y * this.tileMap.tileSize
+    this.container.position.x = this.state.position.x * this.tileMap.tileSize
+    this.container.position.y = this.state.position.y * this.tileMap.tileSize
 
     this.afterUpdate(currentTurn)
     this.ai.afterUpdate(currentTurn)

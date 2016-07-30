@@ -8,7 +8,6 @@ export class EnemyAI extends AI {
 
   beforeUpdate(nextTurn) {
     super.beforeUpdate(nextTurn)
-    // this.actor.actionState.updateState(nextTurn, { point: this.actor.direction[this.direction] })
   }
 
   afterUpdate(currentTurn) {
