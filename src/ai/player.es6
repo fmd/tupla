@@ -34,27 +34,34 @@ export class PlayerAI extends AI {
   }
 
   _determineState() {
-    const gravity = 1.0
-    const friction = 1.0
-    const maxAcceleration = 1.0
-    const maxVelocity = 1.0
+    const acceleration = this._calculateAcceleration()
+    const velocity = this._calculateVelocity(acceleration)
 
+    const position = this._injectedPosition() ||
+                     this._defaultPosition(velocity) ||
+                     this.actor.position.clone()
+
+    this.injectedVelocity = Vec2.create()
+    return { position, velocity, acceleration }
+  }
+
+  _calculateAcceleration() {
+    const gravity = 1.0
+    const maxAcceleration = 1.0
     const acceleration = this.currentState.acceleration
       .clone()
       .add(Vec2.create(0, gravity))
 
-    Vec2.clamp(acceleration, -maxAcceleration, maxAcceleration)
+    return Vec2.clamp(acceleration, -maxAcceleration, maxAcceleration)
+  }
 
+  _calculateVelocity(acceleration) {
+    const maxVelocity = 1.0
     const velocity = this.currentState.velocity
       .clone()
       .add(acceleration)
 
-    Vec2.clamp(velocity, -maxVelocity, maxVelocity)
-
-    const position = this._injectedPosition() || this._defaultPosition(velocity) || this.actor.position.clone()
-    this.injectedVelocity = Vec2.create()
-
-    return { position, velocity, acceleration }
+    return Vec2.clamp(velocity, -maxVelocity, maxVelocity)
   }
 
   _injectedPosition() {

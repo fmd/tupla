@@ -13,7 +13,7 @@ export class GameScene extends Scene {
     this.initializeInteractions()
 
     this.actors = []
-    this.turnTicker = new TurnTicker(1000)
+    this.turnTicker = new TurnTicker(300)
   }
 
   initializeInteractions() {

@@ -13,7 +13,6 @@ export class Player extends Actor {
     this.ai = new PlayerAI(tileMap, this)
     this._drawPlayer()
     this._addToScene(scene)
-    this._drawSuggestionTiles()
   }
 
   requestMove(position) {
