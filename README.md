@@ -5,6 +5,7 @@ WIP game
 #TODO
 
 - Add AI
+- Use victorjs for vector operations
 - Add smart actor collision detection
 - Render tile layers to textures
 - Change all filenames to dashes

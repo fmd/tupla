@@ -12,15 +12,14 @@ export class GameScene extends Scene {
     this.initializeInteractions()
 
     this.actors = []
-    this.turnTicker = new TurnTicker(500)
+    this.turnTicker = new TurnTicker(250)
   }
 
   initializeInteractions() {
     this.interaction.onMouseDown = function(e) {
       let p = new PIXI.Point(e.layerX, e.layerY)
       let t = this.tileMap.tilePointAt(this.screenPointToWorld(p))
-      this.player.moveTo(t)
-      this.player.jumpFrom(t)
+      this.player.requestMove(new PIXI.Point(t.x - this.player.position.x, t.y - this.player.position.y))
     }.bind(this)
 
     this.interaction.addEvents()

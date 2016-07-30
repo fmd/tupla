@@ -24,6 +24,6 @@ export class TileMap extends PIXI.Container {
   tilePointAt(point) {
     const x = (point.x - this.position.x) / this.tileSize
     const y = (point.y - this.position.y) / this.tileSize
-    return new PIXI.Point(Math.round(x), Math.round(y))
+    return new PIXI.Point(Math.floor(x), Math.floor(y))
   }
 }

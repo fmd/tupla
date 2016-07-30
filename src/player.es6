@@ -15,6 +15,10 @@ export class Player extends Actor {
     this._drawSuggestionTiles()
   }
 
+  requestMove(point) {
+    this.ai.injectVelocity(point)
+  }
+
   _addToScene(scene) {
     scene.addChild(this.container)
     scene.camera.lockOn(this.container, this.tileMap.tileSize, this.tileMap.tileSize)
