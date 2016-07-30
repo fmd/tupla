@@ -1,4 +1,5 @@
 import PIXI from 'pixi.js'
+import { Vec2 } from './vec2'
 import { AssetLoader } from './asset_loader'
 import { Camera } from './camera'
 
@@ -17,7 +18,7 @@ export class Scene extends PIXI.Container {
   }
 
   screenPointToWorld(point) {
-    let transformedPoint = new PIXI.Point()
+    let transformedPoint = Vec2.create()
     transformedPoint.x = point.x / this.window.renderTarget.scale.x
     transformedPoint.y = point.y / this.window.renderTarget.scale.y
     transformedPoint = this.camera.offsetMousePosition(transformedPoint)
@@ -71,7 +72,7 @@ export class Scene extends PIXI.Container {
   }
 
   update() {
-    
+
   }
 
   pause() {

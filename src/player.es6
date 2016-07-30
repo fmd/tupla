@@ -1,4 +1,5 @@
 import PIXI from 'pixi.js'
+import { Vec2 } from './vec2'
 import { map, values, filter } from 'lodash'
 import { Color } from './color'
 import { Actor } from './actor'
@@ -8,7 +9,7 @@ import { PlayerAI } from './ai/player'
 
 export class Player extends Actor {
   constructor(scene, tileMap, position) {
-    super(tileMap, { position, acceleration: new PIXI.Point(0,0), velocity: new PIXI.Point(0,0) })
+    super(tileMap, { position, acceleration: Vec2.create(0,0), velocity: Vec2.create(0,0) })
     this.ai = new PlayerAI(tileMap, this)
     this._drawPlayer()
     this._addToScene(scene)

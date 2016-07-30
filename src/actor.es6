@@ -1,12 +1,13 @@
 import PIXI from 'pixi.js'
+import { Vec2 } from './vec2'
 import { AI } from './ai/ai'
 import { ActionState } from './action_state'
 
 export class Actor {
   constructor(tileMap, initialState) {
-    initialState = initialState || { position: new PIXI.Point(0, 0),
-                                     velocity: new PIXI.Point(0, 0),
-                                     acceleration: new PIXI.Point(0, 0) }
+    initialState = initialState || { position: Vec2.create(0, 0),
+                                     velocity: Vec2.create(0, 0),
+                                     acceleration: Vec2.create(0, 0) }
 
     this.initializeState(tileMap, initialState)
   }

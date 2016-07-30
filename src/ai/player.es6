@@ -1,10 +1,11 @@
 import { AI } from './ai'
+import { Vec2 } from '../vec2'
 import { reduce, filter, concat } from 'lodash'
 
 export class PlayerAI extends AI {
   constructor(tileMap, actor) {
     super(tileMap, actor)
-    this.injectedVelocity = new PIXI.Point(0, 0)
+    this.injectedVelocity = Vec2.create()
   }
 
   get currentState() {
@@ -12,10 +13,11 @@ export class PlayerAI extends AI {
   }
 
   get availableMoves() {
-    return reduce(this.directions,(moves, point, direction) => {
+    const b = reduce(this.directions, (moves, point, direction) => {
       if (!this.hasTagAt(direction, 'collides')) moves[direction] = point
       return moves
     }, {})
+    return b
   }
 
   injectVelocity(velocity) {
@@ -36,26 +38,42 @@ export class PlayerAI extends AI {
     const friction = 1.0
     const maxAcceleration = 1.0
     const maxVelocity = 1.0
-    const acceleration = this.clampPoint(this._applyGravity(this.currentState.acceleration, gravity), -maxAcceleration, maxAcceleration)
-    const velocity = this.clampPoint(this._groundVelocity(this.addPoints(this.currentState.velocity, acceleration)), -maxVelocity, maxVelocity)
-    const clampedVelocity = this.clampPoint(this.addPoints(velocity, this.injectedVelocity), -maxVelocity, maxVelocity)
-    const position = this._reduceToAvailable(this.addPoints(this.position, clampedVelocity))
-    this.injectedVelocity = new PIXI.Point(0, 0)
+
+    const acceleration = this.currentState.acceleration
+      .clone()
+      .add(Vec2.create(0, gravity))
+
+    Vec2.clamp(acceleration, -maxAcceleration, maxAcceleration)
+
+    const velocity = this.currentState.velocity
+      .clone()
+      .add(acceleration)
+
+    Vec2.clamp(velocity, -maxVelocity, maxVelocity)
+
+    const position = this._injectedPosition() || this._defaultPosition(velocity) || this.position.clone()
+    this.injectedVelocity = Vec2.create()
+
     return { position, velocity, acceleration }
   }
 
-  _groundVelocity(velocity) {
-    return new PIXI.Point(velocity.x, velocity.y * !this.hasTagAt('down', 'collides'))
+  _injectedPosition() {
+    if (this.injectedVelocity.equals(Vec2.create())) return null
+    const position = filter(this.availableMoves, (p) => p.equals(this.position.clone().add(this.injectedVelocity)))[0]
+    return position
   }
 
-  _reduceToAvailable(point) {
-    console.log(point, this.availableMoves)
-    return concat(filter(this.availableMoves, (p) => point.x == p.x && point.y == p.y), this.position)[0]
+  _defaultPosition(velocity) {
+    return filter(this.availableMoves, (p) => p.equals(this.position.clone().add(velocity)))[0]
+  }
+
+  _groundVelocity(velocity) {
+    return Vec2.create(velocity.x, velocity.y * !this.hasTagAt('down', 'collides'))
   }
 
   _applyGravity(acceleration, gravity) {
     const x = acceleration.x
     const y = gravity
-    return new PIXI.Point(x, y)
+    return Vec2.create(x, y)
   }
 }

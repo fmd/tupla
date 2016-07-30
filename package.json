@@ -11,7 +11,9 @@
   "dependencies": {
     "lodash": "^4.13.1",
     "path": "^0.12.7",
-    "pixi.js": "^3.0.11"
+    "pixi.js": "^3.0.11",
+    "vector2d": "^2.1.0",
+    "victor": "^1.1.0"
   },
   "devDependencies": {
     "vinyl-buffer": "^1.0.0",

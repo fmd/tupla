@@ -1,6 +1,7 @@
 import PIXI from 'pixi.js'
+import { Vec2 } from './vec2'
 
-export class Camera extends PIXI.Point {
+export class Camera extends Vec2 {
   constructor(x, y, screenWidth, screenHeight) {
     super(x, y)
     this.screenWidth = screenWidth
@@ -11,7 +12,7 @@ export class Camera extends PIXI.Point {
   }
 
   offsetMousePosition(point) {
-    return new PIXI.Point(this.x + point.x, this.y + point.y)
+    return Vec2.create(this.x + point.x, this.y + point.y)
   }
 
   update(scene) {

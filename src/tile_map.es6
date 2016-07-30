@@ -1,4 +1,5 @@
 import PIXI from 'pixi.js'
+import { Vec2 } from './vec2'
 import { TileLayer } from './tile_layer'
 import { map, max, some, uniq, flatten } from 'lodash'
 
@@ -24,6 +25,6 @@ export class TileMap extends PIXI.Container {
   tilePointAt(point) {
     const x = (point.x - this.position.x) / this.tileSize
     const y = (point.y - this.position.y) / this.tileSize
-    return new PIXI.Point(Math.floor(x), Math.floor(y))
+    return Vec2.create(Math.floor(x), Math.floor(y))
   }
 }

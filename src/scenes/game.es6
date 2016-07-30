@@ -1,4 +1,5 @@
 import PIXI from 'pixi.js'
+import { Vec2 } from '../vec2'
 import { Scene } from '../scene'
 import { TileMap } from '../tile_map'
 import { Player } from '../player'
@@ -17,9 +18,9 @@ export class GameScene extends Scene {
 
   initializeInteractions() {
     this.interaction.onMouseDown = function(e) {
-      let p = new PIXI.Point(e.layerX, e.layerY)
+      let p = Vec2.create(e.layerX, e.layerY)
       let t = this.tileMap.tilePointAt(this.screenPointToWorld(p))
-      this.player.requestMove(new PIXI.Point(t.x - this.player.position.x, t.y - this.player.position.y))
+      this.player.requestMove(Vec2.create(t.x - this.player.position.x, t.y - this.player.position.y))
     }.bind(this)
 
     this.interaction.addEvents()
@@ -40,7 +41,7 @@ export class GameScene extends Scene {
     this.tileMap = new TileMap(resources, 'resources/maps/game.json')
     this.addChild(this.tileMap)
 
-    this.player = new Player(this, this.tileMap, new PIXI.Point(2, 2))
+    this.player = new Player(this, this.tileMap, Vec2.create(2, 2))
     this.camera.update(this)
   }
 }
