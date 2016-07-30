@@ -5,9 +5,9 @@ import { ActionState } from './action_state'
 
 export class Actor {
   constructor(tileMap, initialState) {
-    initialState = initialState || { position: Vec2.create(0, 0),
-                                     velocity: Vec2.create(0, 0),
-                                     acceleration: Vec2.create(0, 0) }
+    initialState = initialState || { position:     Vec2.create(),
+                                     velocity:     Vec2.create(),
+                                     acceleration: Vec2.create() }
 
     this.initializeState(tileMap, initialState)
   }

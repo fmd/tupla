@@ -19,10 +19,10 @@ export class AI {
   get directions() {
     const p = this.actor.position
     return { center: p,
-             up:        Vec2.create(p.x, p.y - 1),
+             up:        Vec2.create(p.x,     p.y - 1),
              upRight:   Vec2.create(p.x + 1, p.y - 1),
              upLeft:    Vec2.create(p.x - 1, p.y - 1),
-             down:      Vec2.create(p.x, p.y + 1),
+             down:      Vec2.create(p.x,     p.y + 1),
              downRight: Vec2.create(p.x + 1, p.y + 1),
              downLeft:  Vec2.create(p.x - 1, p.y + 1),
              left:      Vec2.create(p.x - 1, p.y),

@@ -16,8 +16,13 @@ export class Player extends Actor {
   }
 
   requestMove(position) {
-    this.ai.injectVelocity(position.clone().subtract(this.position))
-    this._drawSelectedTile(position)
+    if (some(this.ai.availableMoves, (p) => p.equals(position))) {
+      this.ai.injectPosition(position.clone().subtract(this.position))
+      this._drawSelectedTile(position)
+    } else if (some(this.ai.availableJumps, (p) => p.equals(position))) {
+      this.ai.injectVelocity(Vec2.create(0, -3))
+      this._drawSelectedTile(position)
+    }
   }
 
   _addToScene(scene) {
@@ -43,11 +48,26 @@ export class Player extends Actor {
     this.addChild(this.suggestionsContainer)
   }
 
-  _drawVelocityTile() {
+  _drawJumpTile() {
+    if (this.jumpTile) this.suggestionsContainer.removeChild(this.jumpTile)
+    let tilePosition = values(this.ai.availableJumps)[0]
+    if (!tilePosition) return
+    tilePosition = tilePosition.clone().subtract(this.position)
+    const rect = { x: tilePosition.x, y: tilePosition.y, width: 1, height: 1 }
+    this.jumpTile = TileRenderer.drawColor(this.tileMap.tileSize, rect, '#4aa3df', 0.5)
+    this.suggestionsContainer.addChild(this.jumpTile)
+  }
+
+  _drawVelocityTile(nextVelocity) {
+    Vec2.clamp(nextVelocity, -1.0, 1.0)
     if (this.velocityTile) this.suggestionsContainer.removeChild(this.velocityTile)
-    const inAvailableTiles = some(values(this.ai.availableMoves), (p) => p.equals(this.velocity.clone().add(this.position)))
+
+    const inAvailableTiles = some(values(this.ai.availableMoves), (p) => {
+      return !p.equals(this.position) && p.equals(nextVelocity.clone().add(this.position))
+    })
+
     if (!inAvailableTiles) return
-    const rect = { x: this.velocity.x, y: this.velocity.y, width: 1, height: 1 }
+    const rect = { x: nextVelocity.x, y: nextVelocity.y, width: 1, height: 1 }
     this.velocityTile = TileRenderer.drawColor(this.tileMap.tileSize, rect, '#ffffff', 0.3)
     this.suggestionsContainer.addChild(this.velocityTile)
   }
@@ -73,6 +93,7 @@ export class Player extends Actor {
   afterUpdate() {
     this.updateCamera()
     this._drawSuggestionTiles()
-    this._drawVelocityTile()
+    this._drawJumpTile()
+    this._drawVelocityTile(this.ai._determineState().velocity.clone())
   }
 }
