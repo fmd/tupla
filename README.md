@@ -4,6 +4,7 @@ WIP game
 
 #TODO
 
+- Should the move action be a special
 - Add smart actor collision detection
 - Add keyboard controls
 - Render tile layers to textures

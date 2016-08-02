@@ -17,9 +17,7 @@ export class Player extends Actor {
     this._addToScene(scene)
   }
 
-  beforeUpdate(nextTurn) {}
-
-  afterUpdate(currentTurn) {
+  update() {
     this.updateCamera()
   }
 

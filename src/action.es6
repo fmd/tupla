@@ -17,16 +17,17 @@ export class Action {
     return pick(TileMap.directions, keys(this.tiles))
   }
 
-  get stateMutations() {
-    return {}
+  beforeState(prevState) {
+    return prevState
   }
 
-  beforeUpdate() {
-
+  afterState(prevState) {
+    return prevState
   }
 
-  afterUpdate() {
+  update() {
     this.render()
+    this._selected = null
   }
 
   select(tile) {
@@ -36,6 +37,5 @@ export class Action {
 
   render() {
     this.actor.guideRenderer.render(this.directions, this.color)
-    this._selected = null
   }
 }

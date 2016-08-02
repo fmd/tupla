@@ -1,23 +1,13 @@
 import { AI } from './ai'
-import { Move } from '../actions/move'
+import { Fall } from '../actions/fall'
 import { Jump } from '../actions/jump'
+import { Move } from '../actions/move'
 
 export class PlayerAI extends AI {
   constructor(tileMap, actor) {
     super(tileMap, actor)
-    this.actions = [new Move(tileMap, actor),
-                    new Jump(tileMap, actor)]
-  }
-
-  selectDirection(tilePosition) {
-    super.selectDirection(tilePosition)
-  }
-
-  beforeUpdate(nextTurn) {
-    super.beforeUpdate(nextTurn)
-  }
-
-  afterUpdate(currentTurn) {
-    super.afterUpdate(currentTurn)
+    this.actions = [new Fall(tileMap, actor),
+                    new Jump(tileMap, actor),
+                    new Move(tileMap, actor)]
   }
 }

@@ -13,7 +13,7 @@ export class GameScene extends Scene {
     this.initializeInteractions()
 
     this.actors = []
-    this.turnTicker = new TurnTicker(500)
+    this.turnTicker = new TurnTicker(1000)
   }
 
   initializeInteractions() {
@@ -38,7 +38,7 @@ export class GameScene extends Scene {
     this.tileMap = new TileMap(resources, 'resources/maps/game.json')
     this.addChild(this.tileMap)
 
-    this.player = new Player(this, this.tileMap, Vec2.create(1, 5))
+    this.player = new Player(this, this.tileMap, Vec2.create(1, 1))
     this.camera.update(this)
   }
 }

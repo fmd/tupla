@@ -43,23 +43,20 @@ export class Actor {
     return this.state.position
   }
 
-  beforeUpdate(nextTurn) {}
-
-  afterUpdate(currentTurn) {}
+  update() {}
 
   beforeUpdateTurn(nextTurn) {
-    this.ai.beforeUpdate(nextTurn)
-    this.beforeUpdate(nextTurn)
-
-    this.actionState.updateState(nextTurn, this.ai.determineState(this.state))
+    const newState = this.ai.determineState(this.state)
+    this.actionState.updateState(nextTurn, newState)
   }
 
   afterUpdateTurn(currentTurn) {
     this.guideRenderer.clear()
+
     this.container.position.x = this.state.position.x * this.tileMap.tileSize
     this.container.position.y = this.state.position.y * this.tileMap.tileSize
 
-    this.afterUpdate(currentTurn)
-    this.ai.afterUpdate(currentTurn)
+    this.update(currentTurn)
+    this.ai.update()
   }
 }

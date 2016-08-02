@@ -24,10 +24,28 @@ export class TileMap extends PIXI.Container {
              right:     Vec2.create( 1,  0) }
   }
 
+  static get horizontalDirections() {
+    return { center:    Vec2.create( 0,  0),
+             left:      Vec2.create(-1,  0),
+             right:     Vec2.create( 1,  0) }
+  }
+
+  static get verticalDirections() {
+    return { center:    Vec2.create( 0,  0),
+             up:        Vec2.create( 0, -1),
+             down:      Vec2.create( 0,  1) }
+  }
+
   isGrounded(point) {
     const centerFree = !this.hasTagAt(point, 'collides')
     const downCollides = this.hasTagAt(point.clone().add(TileMap.directions.down), 'collides')
     return centerFree && downCollides
+  }
+
+  isCeilinged(point) {
+    const centerFree = !this.hasTagAt(point, 'collides')
+    const upCollides = this.hasTagAt(point.clone().add(TileMap.directions.up), 'collides')
+    return centerFree && upCollides
   }
 
   hasTagAt(point, tag) {
