@@ -2,18 +2,18 @@ import { some, keys, pick, pickBy, merge, values } from 'lodash'
 import { AI } from './ai'
 import { Vec2 } from '../vec2'
 import { TileMap } from '../tile_map'
-import { GuideRenderer } from '../guide_renderer'
+import { Move } from '../actions/move'
+import { Jump } from '../actions/jump'
 
 export class PlayerAI extends AI {
   constructor(tileMap, actor) {
     super(tileMap, actor)
-    this.guideRenderer = new GuideRenderer(tileMap, this.actor)
-    this.actor.addChild(this.guideRenderer)
+    this.actions = [new Move(tileMap, actor),
+                    new Jump(tileMap, actor)]
   }
 
   selectDirection(tilePosition) {
     super.selectDirection(tilePosition)
-    this.guideRenderer.render(this.selectedDirection, '#27ae60')
   }
 
   beforeUpdate(nextTurn) {
@@ -22,7 +22,5 @@ export class PlayerAI extends AI {
 
   afterUpdate(currentTurn) {
     super.afterUpdate(currentTurn)
-    this.guideRenderer.clear()
-    this.guideRenderer.render(this.availableDirections, '#cccccc')
   }
 }

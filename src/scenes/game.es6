@@ -20,7 +20,7 @@ export class GameScene extends Scene {
     this.interaction.onMouseDown = function(e) {
       let p = Vec2.create(e.layerX, e.layerY)
       let t = this.tileMap.tilePointAt(this.screenPointToWorld(p))
-      this.player.ai.selectDirection(t)
+      this.player.ai.select(t)
     }.bind(this)
 
     this.interaction.addEvents()

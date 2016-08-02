@@ -2,6 +2,7 @@ import PIXI from 'pixi.js'
 import { Vec2 } from './vec2'
 import { AI } from './ai/ai'
 import { ActionState } from './action_state'
+import { GuideRenderer } from './guide_renderer'
 
 export class Actor {
   constructor(tileMap, initialState) {
@@ -15,8 +16,11 @@ export class Actor {
   initializeState(tileMap, initialState) {
     this.tileMap = tileMap
     this.actionState = new ActionState(initialState)
-    this.ai = new AI(tileMap, this)
     this.container = new PIXI.Container()
+
+    this.guideRenderer = new GuideRenderer(tileMap, this)
+    this.addChild(this.guideRenderer)
+    this.ai = new AI(tileMap, this)
   }
 
   addChild(child) {
@@ -51,6 +55,7 @@ export class Actor {
   }
 
   afterUpdateTurn(currentTurn) {
+    this.guideRenderer.clear()
     this.container.position.x = this.state.position.x * this.tileMap.tileSize
     this.container.position.y = this.state.position.y * this.tileMap.tileSize
 
