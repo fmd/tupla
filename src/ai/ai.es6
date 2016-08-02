@@ -20,8 +20,6 @@ export class AI {
       return result
     }, { position: Vec2.create(), potential: Vec2.create(), speed: 0 })
 
-    if (stateMutations.position.x > 0) console.log(stateMutations)
-
     const newState = { position: prevState.position.clone().add(stateMutations.position),
                        potential: prevState.potential.clone().add(stateMutations.potential),
                        speed: prevState.speed + stateMutations.speed }

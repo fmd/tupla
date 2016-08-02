@@ -1,7 +1,4 @@
-import { some, keys, pick, pickBy, merge, values } from 'lodash'
 import { AI } from './ai'
-import { Vec2 } from '../vec2'
-import { TileMap } from '../tile_map'
 import { Move } from '../actions/move'
 import { Jump } from '../actions/jump'
 
