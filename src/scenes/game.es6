@@ -5,6 +5,7 @@ import { TileMap } from '../tile_map'
 import { Player } from '../player'
 import { flatten } from 'lodash'
 import { TurnTicker } from '../turn_ticker'
+import { Enemy } from '../enemy'
 
 export class GameScene extends Scene {
   constructor(window, interaction) {
@@ -13,7 +14,7 @@ export class GameScene extends Scene {
     this.initializeInteractions()
 
     this.actors = []
-    this.turnTicker = new TurnTicker(1000)
+    this.turnTicker = new TurnTicker(250)
   }
 
   initializeInteractions() {
@@ -37,6 +38,8 @@ export class GameScene extends Scene {
 
     this.tileMap = new TileMap(resources, 'resources/maps/game.json')
     this.addChild(this.tileMap)
+
+    this.enemy = new Enemy(this, this.tileMap, Vec2.create(3, 1))
 
     this.player = new Player(this, this.tileMap, Vec2.create(1, 1))
     this.camera.update(this)

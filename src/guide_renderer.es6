@@ -6,6 +6,7 @@ import { map, keys, mapValues } from 'lodash'
 export class GuideRenderer extends PIXI.Container {
   constructor(tileMap, actor) {
     super()
+    this.onlyShowSelected = false
     this.tileMap = tileMap
     this.actor = actor
     this.clear()
@@ -19,7 +20,7 @@ export class GuideRenderer extends PIXI.Container {
   render(tiles, color) {
     map(keys(tiles), (d) => {
       this.removeChild(this.tiles[d])
-      this.tiles[d] = this._renderTile(tiles[d], color)
+      if (!this.onlyShowSelected) this.tiles[d] = this._renderTile(tiles[d], color)
     })
   }
 

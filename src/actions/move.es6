@@ -5,28 +5,31 @@ import { TileMap } from '../tile_map'
 import { Actor } from '../actor'
 
 export class Move extends Action {
-  constructor(tileMap, actor, next) {
-    super(tileMap, actor, next)
+  constructor(tileMap, actor) {
+    super(tileMap, actor)
     this.color = '#cccccc'
   }
 
   get tiles() {
-    let tiles = {}
     const position = this.actor.state.position.clone()
     const potential = Vec2.clamp(this.actor.state.potential.clone(), -1, 1)
-    const potentials = pickBy(TileMap.directions, (d) => d.y == potential.y)
-    tiles = merge(tiles, pickBy(potentials, (v) => !this.tileMap.hasTagAt(v.add(position), 'collides')))
+    return merge(this._moveTiles(position, potential), this._climbTiles(position, potential))
+  }
 
-    if (potential.y == 0) {
-      const climbables = pickBy(TileMap.directions, (d) => d.x != 0 && d.y != 0)
-      tiles = merge(tiles, pickBy(climbables, (v) => this.tileMap.isGrounded(v.add(position))))
-    }
+  _moveTiles(position, potential) {
+    const directions = pickBy(TileMap.directions, (d) => d.y == potential.y)
+    return pickBy(directions, (v) => !this.tileMap.hasTagAt(v.add(position), 'collides'))
+  }
 
-    return tiles
+  _climbTiles(position, potential) {
+    const climbables = pickBy(TileMap.directions, (d) => d.x != 0 && d.y != 0)
+    if (potential.y != 0 || !this.tileMap.isGrounded(position)) return {}
+    return pickBy(climbables, (v) => this.tileMap.isGrounded(v.add(position)))
   }
 
   beforeState(prevState) {
     const direction = values(this._selected)[0] || Vec2.clamp(prevState.potential.clone(), -1, 1) || Vec2.create()
+
     if (!this.tileMap.hasTagAt(prevState.position.clone().add(direction), 'collides')) {
       prevState.position.add(direction)
     }

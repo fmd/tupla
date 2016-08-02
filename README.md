@@ -4,7 +4,9 @@ WIP game
 
 #TODO
 
-- Should the move action be a special
+- Maybe remove before/after state?
+- Input is a few pixels off
+- Actor needs to be grounded to climb
 - Add smart actor collision detection
 - Add keyboard controls
 - Render tile layers to textures
