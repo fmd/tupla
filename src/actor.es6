@@ -5,9 +5,9 @@ import { ActionState } from './action_state'
 
 export class Actor {
   constructor(tileMap, initialState) {
-    initialState = initialState || { position:     Vec2.create(),
-                                     velocity:     Vec2.create(),
-                                     acceleration: Vec2.create() }
+    initialState = initialState || { position: Vec2.create(),
+                                     potential: Vec2.create(),
+                                     speed: 1.0 }
 
     this.initializeState(tileMap, initialState)
   }
@@ -31,12 +31,8 @@ export class Actor {
     return this.actionState.current
   }
 
-  get acceleration() {
-    return this.state.acceleration
-  }
-
-  get velocity() {
-    return this.state.velocity
+  get potential() {
+    return this.state.potential
   }
 
   get position() {
@@ -50,6 +46,8 @@ export class Actor {
   beforeUpdateTurn(nextTurn) {
     this.ai.beforeUpdate(nextTurn)
     this.beforeUpdate(nextTurn)
+
+    this.actionState.updateState(nextTurn, this.ai.determineState(this.state))
   }
 
   afterUpdateTurn(currentTurn) {

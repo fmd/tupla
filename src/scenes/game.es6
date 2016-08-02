@@ -20,7 +20,7 @@ export class GameScene extends Scene {
     this.interaction.onMouseDown = function(e) {
       let p = Vec2.create(e.layerX, e.layerY)
       let t = this.tileMap.tilePointAt(this.screenPointToWorld(p))
-      this.player.requestMove(Vec2.create(t.x, t.y))
+      this.player.ai.selectDirection(t)
     }.bind(this)
 
     this.interaction.addEvents()
@@ -38,7 +38,7 @@ export class GameScene extends Scene {
     this.tileMap = new TileMap(resources, 'resources/maps/game.json')
     this.addChild(this.tileMap)
 
-    this.player = new Player(this, this.tileMap, Vec2.create(2, 2))
+    this.player = new Player(this, this.tileMap, Vec2.create(1, 5))
     this.camera.update(this)
   }
 }
